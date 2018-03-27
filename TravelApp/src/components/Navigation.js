@@ -12,6 +12,7 @@ import EcrirePage from '../scene/Diary/EcrirePage';
 import MesCarnets from '../scene/Diary/MesCarnets';
 import SignIn from '../scene/Authentification/Authentification';
 import SignUp from '../scene/Register/Register';
+import Post from '../scene/Photos/Post';
 
 // Mise en place de la navigation au sein de l'application
 
@@ -35,18 +36,12 @@ const RootStack = StackNavigator({
   );
 
 const RootStack1 = StackNavigator({
-  ProfilScreen :{
-    screen : Profil 
-  },
-  ParametersScreen :{
-    screen : Parameters
-  },
- /* SignInScreen :{
-    screen : SignIn
-  },
-  SignUpScreen :{
-    screen: SignUp
-  },*/
+    ProfilScreen :{
+      screen : Profil 
+    },
+    ParametersScreen :{
+      screen : Parameters
+    },
 },
   {
     initialRouteName: 'ProfilScreen',
@@ -54,20 +49,33 @@ const RootStack1 = StackNavigator({
 );
 
 const RootStack2 = StackNavigator({
-  MesCarnetScreen:{
-    screen: MesCarnets
-  },
-  EcrirePageScreen :{
-    screen : EcrirePage
-  },
-  CreerCarnetScreen :{
-    screen : CreerCarnet
-  }  
+    MesCarnetScreen:{
+      screen: MesCarnets
+    },
+    EcrirePageScreen :{
+      screen : EcrirePage
+    },
+    CreerCarnetScreen :{
+      screen : CreerCarnet
+    },  
 },
   {
     initialRouteName: 'MesCarnetScreen',
   },
-)
+);
+
+const RootStack3 = StackNavigator({
+    PhotosScreen: {
+      screen : Photos
+    },
+    PostScreen: {
+      screen : Post
+    },
+},
+  {
+    initialRouteName : 'PhotosScreen',
+  },
+);
 
 
 const BarreNavigation =  TabNavigator({
@@ -75,7 +83,7 @@ const BarreNavigation =  TabNavigator({
     screen : RootStack,
   },
   Photos: {
-    screen: Photos
+    screen: RootStack3,
   },
   Carnet: {
     screen: RootStack2,

@@ -1,7 +1,21 @@
  import { StyleSheet } from 'react-native'; 
 
 export const styles = StyleSheet.create ({
-    //Carnet de voyage
+    //Page de paramètre
+    buttonParameter:{
+        padding: 10,
+        borderBottomColor : '#A9A9A9',
+        borderColor:'transparent',
+        marginBottom: 2,
+        borderWidth:1, 
+        overflow: 'hidden',
+
+    },
+    buttonParameterText:{
+        textAlign:'left',
+        color:'#696969',
+    },
+    //page de carnet de voyage
     couvertureContainer:{
         flexDirection:'row',
         marginBottom:10,
@@ -251,6 +265,21 @@ export const styles = StyleSheet.create ({
         textAlign: 'center',
         fontWeight: '700',
         fontSize : 16,
+    },
+    btnPostContainer:{
+        flexDirection:'row',
+        justifyContent: 'space-between',
+        
+    },
+    btnPost:{
+        padding:10,
+        marginTop : 20,
+    },
+    btnTextPost:{
+        color: '#A9A9A9',
+        textAlign: 'center',
+        fontWeight: '700',
+        fontSize : 14,
     },
 
     //Profil utilisateur

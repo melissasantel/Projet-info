@@ -1,7 +1,7 @@
 //Page d'insciprition
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Image, 
+import {StyleSheet, View, Text, Image,
     KeyboardAvoidingView, TextInput, TouchableOpacity,StatusBar} from 'react-native';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import ViewContainer from '../../components/ViewContainer';

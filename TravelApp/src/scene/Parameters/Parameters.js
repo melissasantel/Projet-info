@@ -18,6 +18,10 @@ export default class Parameters extends Component {
         }
         
     }
+    static navigationOptions ={
+        headerTitle : 'Paramètres',
+    
+      };
    componentDidMount() {
         firebase.auth().onAuthStateChanged((user)=>{
             this.setState({user});
@@ -31,34 +35,25 @@ export default class Parameters extends Component {
             console.log(e);
         }
     }
-        
-        /*.then(()=> this.setState({ authentification: false, message:'Vous êtes maintenant déconnecté', user : null}))
-        .catch(function(error){
-            //Gestion des erreurs
-            console.log(error.code)
-            console.log(error.message)
-        });
-    }*/
 
     render() {
         return (
             <ViewContainer>
-                <StatusbarBackground/>
                 <TouchableOpacity style={styles.buttonParameter} onPress={() => this.signOutUser()}>
-                    <Text style={styles.buttonTextLogIn}>Se déconnecter</Text>
+                    <Text style={styles.buttonParameterText}>Se déconnecter</Text>
                     <Text>{this.state.message}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonParameter}>
-                    <Text style={styles.buttonTextLogIn}>Compte privé</Text>
+                    <Text style={styles.buttonParameterText}>Compte privé</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonParameter}>
-                    <Text style={styles.buttonTextLogIn}>Changer le mot de passe</Text>
+                <TouchableOpacity onPress={()=>this.passwordUdapte()} style={styles.buttonParameter}>
+                    <Text style={styles.buttonParameterText}>Changer le mot de passe</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonParameter}>
-                    <Text style={styles.buttonTextLogIn}>Changer de photos de profil</Text>
+                <TouchableOpacity onPress={()=>this.profilPicturUdapte()} style={styles.buttonParameter}>
+                    <Text style={styles.buttonParameterText}>Changer de photos de profil</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonParameter}>
-                    <Text style={styles.buttonTextLogIn}>Changer la description</Text>
+                <TouchableOpacity onPress={()=>this.descriptionUdapte()} style={styles.buttonParameter}>
+                    <Text style={styles.buttonParameterText}>Changer la description</Text>
                 </TouchableOpacity>
             </ViewContainer>
         )
