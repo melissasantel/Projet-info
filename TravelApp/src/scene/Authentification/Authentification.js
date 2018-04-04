@@ -28,7 +28,7 @@ export default class Loggin extends Component {
     //Fonction permettant de se connecter à l'application en recherchant les informations dans firebase
     _login() {
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(()=> this.setState({error:'',user : firebase.auth().currentUser /*connexion:true*/}))
+        .then(()=> this.setState({error:'',user : firebase.auth().currentUser}))
         .catch(function(error){
             //Gestion des erreurs
             console.log(error.code)
@@ -41,17 +41,12 @@ export default class Loggin extends Component {
         this.setState({registry : true})
     }
     render() {
-        //const {navigate} = this.props.navigation;
-
         if (this.state.registry)
         {
            return <Signup/>;
         }
-        if (this.state.user)
-        {  
-            return <Profil/>
-        }
-        if (this.state.registry === false && this.state.user === null) {
+    
+        if (this.state.registry === false) {
             return (
 
             <ScrollView contentContainerStyle={styles.contentContainer}>

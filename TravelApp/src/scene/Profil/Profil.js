@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
-import {Image, StyleSheet, Text, View, Button,ScrollView, TouchableOpacity } from 'react-native';
+import {Image, StyleSheet, Text, View, Button,ScrollView, TouchableOpacity, ListView } from 'react-native';
 import Loggin from '../Authentification/Authentification';
 import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
@@ -12,24 +12,50 @@ export default class Profil extends Component {
         super();
         this.state = {
             parametre: false,
+            val : 'post',
+            user: '',
+            pseudo : '',
+            imageUri : '',
+            description:'',
         };
-//var user = firebase.auth().currentUser;         
+        
     }
 
     static navigationOptions ={
       header: null
 
     };
-  
+
    componentDidMount() {
-      firebase.auth().onAuthStateChanged((user)=>{
-          this.setState({user});
-      })
+    firebase.auth().onAuthStateChanged((user)=>{
+      this.setState({user});
+      if (user){
+        this.renderUserData(user)
+      } 
+   })  
   }
 
-    render() {
-        
-      if (this.state.user)
+  componentWillMount(){
+    firebase.auth().onAuthStateChanged((user)=>{
+      this.setState({user});
+      if (user){
+        this.renderUserData(user)
+      }
+    }) 
+  }
+
+  renderUserData(user){ 
+    firebase.database().ref('users/' + user.uid+'/pseudonyme').on("value", snapshot => {
+      this.setState({pseudo: snapshot.val()})});
+    firebase.database().ref('users/' + user.uid+'/profil_picture').on("value", snapshot => {
+      this.setState({imageUri: snapshot.val()})});
+    firebase.database().ref('users/' + user.uid+'/description').on("value", snapshot => {
+      this.setState({description: snapshot.val()})});
+  }
+
+  render() {  
+  //si l'utilisateur est connecté il visualise sont profil.
+    if (this.state.user)
         {
           const {navigate} = this.props.navigation;
           return (
@@ -45,25 +71,25 @@ export default class Profil extends Component {
                   </View>
                   <View style={styles.profilPicture}>
                     <View style={styles.profilPictureBorder}>
-                      <Image source ={require('../../image/profilPicture.png')}/>
+                      <Image source ={{uri:this.state.imageUri}}/>
                     </View>
                   </View>
                   <View style={styles.description}>
-                    <Text style={styles.nameText}> EDITH  LOUSSARD </Text>
-                    <Text style={styles.descriptionText}> Je suis une globetrotteuse. 
-                    J'aimerai partager mes aventures avec vous.</Text>
+                    <Text style={styles.nameText}>{this.state.pseudo}</Text>
+                    <Text style={styles.descriptionText}>{this.state.description}</Text>
                   </View>
                 </View>
                 <View style={styles.affichageContainer}>
-                <TouchableOpacity style={styles.btnGalerieProfil}>
-                    <Text>Galerie</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnCarnetProfil}>
-                  <Text>Carnets</Text>
+                  <TouchableOpacity style={styles.btnGalerieProfil}>
+                      <Text>Galerie</Text>
                     </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnCarnetProfil}>
+                    <Text>Carnets</Text>
+                  </TouchableOpacity>
                 </View>
               </ViewContainer>
-             </ScrollView>
+            </ScrollView>
+            
           )
         }
         // Si l'utilisateur n'est pas connecté, il est renvoyé vers la page de connexion

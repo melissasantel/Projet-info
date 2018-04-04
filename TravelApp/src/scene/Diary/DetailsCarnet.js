@@ -6,16 +6,20 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
 
-
-export default class MesCarnets extends React.Component {
-    constructor(props){
+export default class DetailsCarnet extends React.Component {
+    render(){
+        return (
+            <Text> Pages du carnets sélectionnés</Text>
+        )
+    }
+    /*constructor(props){
         super(props);
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
         this.state = { 
-            user :null,
-            carnetDataSource: ds,
+            user : firebase.auth().currentUser,
+            dataSource: ds,
         }
-        this.carnetsRef= this.getRef().child('Carnets');
+        this.Ref= this.getRef().child('Carnets');
 
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
@@ -60,7 +64,6 @@ export default class MesCarnets extends React.Component {
     }
     pressRow(carnet){
         console.log(carnet);
-        this.props.navigation.navigate('DetailsCarnetScreen')
       }
     renderRow(carnet){
         return(
@@ -80,36 +83,22 @@ export default class MesCarnets extends React.Component {
     }
    
     render() {
-        if (this.state.user){
-
-            const {navigate} = this.props.navigation;
-            return (
-                <ViewContainer>
-                    <View style={styles.btnCreerContainer}>
-                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')}>
+        const {navigate} = this.props.navigation;
+        return (
+            <ViewContainer>
+                <View style={styles.btnCreerContainer}>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')}>
                         <Text style={styles.btnCreer}>Créer </Text>
-                        </TouchableOpacity>
-                        <Image style={styles.logoAjoutCarnet}
+                    </TouchableOpacity>
+                    <Image style={styles.logoAjoutCarnet}
                         source={require('../../image/plus-button.png')}/>
                    </View>
                     <ListView dataSource={this.state.carnetDataSource}
                     renderRow={this.renderRow} />
                     </ViewContainer>
             )
-        }
-        else {
-            return (
-            <ViewContainer>
-                <StatusbarBackground/>
-                <View style={styles.informationContainer}>
-                <Image style={styles.logoImage} source={require('../../image/journal2.png')}/>
-                <Text 
-                style={styles.informationMessage}>Vous devez vous connecter pour accéder à vos carnet de voyages !
-                </Text>
-                </View>
-             </ViewContainer>
-            )
-        }
+        
        
-    }
+    }*/
+
 }

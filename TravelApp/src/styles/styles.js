@@ -2,6 +2,31 @@
 
 export const styles = StyleSheet.create ({
     //Page de paramètre
+    inputParameters:{
+        borderBottomWidth: 1,
+        height: 20,
+        marginBottom:30,
+        borderBottomColor:'transparent',
+        color: '#A9A9A9',
+        paddingHorizontal: 10,
+        fontSize : 14,
+        paddingLeft:10,
+    },
+    setUpContainer:{
+        flexDirection :'row',
+        //justifyContent:'flex-end',
+        backgroundColor:'#fff',
+        borderBottomColor:'#A9A9A9',
+        borderColor:'transparent',
+        borderWidth:1,
+        paddingLeft:10,
+        paddingTop:14, 
+        paddingBottom:16,
+    },
+    lblSetUp:{
+        fontWeight:'bold', 
+         
+    },
     buttonParameter:{
         padding: 10,
         borderBottomColor : '#A9A9A9',

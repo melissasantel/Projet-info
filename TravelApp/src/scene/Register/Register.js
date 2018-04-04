@@ -24,56 +24,64 @@ export default class Signin extends Component {
             verifyPassword:'',
             error: '',  
             back: false,
-            user: null,
-            profil_picture:'',
-            visible_account:true,
+            user: '',
+            profil_picture:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/220px-User_icon_2.svg.png',
+
         }
-        this._register = this._register.bind(this)  
+        this._register = this._register.bind(this);
     }
 
     //Fonction permettant d'inscrire l'utilisateurs dans Firebase.
     _register() {
+        var nom = this.state.lastName;
+        var prenom = this.state.firstName;
+        var pseudo = this.state.pseudo;
+        var profilPicture = this.state.profil_picture;
+
         if (this.state.password === this.state.verifyPassword){
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then (()=> {
-                this.setState({ user : firebase.auth().currentUser, error: ''})
-            })
+            .then (console.log('Connexion réussit')
+            )
             .catch(function(error) {
                 // Gestion des erreurs
                 console.log(error.code)
                 console.log(error.message)             
-        }) 
+            }) 
         } 
         else {
-            this.setState ({error: 'Les mots de passes ne sont pas identiques', user: null});     
-    }
-    if (this.state.user)
-    {   
-        console.log(user.uid)
-        this._writeUserData();
-    }
+            this.setState ({error: 'Les mots de passes ne sont pas identiques'});     
+        }
+        console.log('passe par la'),
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log('Je passe'),
+                userId = user.uid,
+                console.log(userId),
+                console.log(nom),
+                firebase.database().ref ('users/' + user.uid).set({
+                    nom:nom.toString(),
+                    prenom:prenom.toString(),
+                    pseudonyme: pseudo.toString(),
+                    profil_picture:profilPicture.toString(),
+                    visible_account:'true',
+                    description:'',
+                });
+                
+            } /*else {
+               console.log('encore un échec')
+            }*/
+          });
+
+    
 }
 
-//Fonction permettant de rentrer les données de l'utilisateurs dans Firebase.
-    _writeUserData(){
-        firebase.database().ref ('users/' + user.uid).set({
-            nom:this.state.lastName,
-            prenom:this.state.firstName,
-            pseudonyme: this.state.pseudo,
-            mail:this.state.email,
-            mdp:this.state.password,
-            profil_picture:'',
-            visible_account:true,
-        });
-    }
+
     _goBback() {
         this.setState({back:true})
     }
     
     render() {
-        //const {navigate} = this.props.navigation;
-
-        if ( this.state.back === false && this.state.user === null){
+        if ( this.state.back === false){
         return (
             <ScrollView contentContainerStyle={styles.contentContainer}>
             <ViewContainer>
@@ -89,7 +97,7 @@ export default class Signin extends Component {
                     value={this.state.lastName}
                     returnKeyType="next"
                     onSubmitEditing={()=> this.firstNameInput.focus()}
-                    autoCapitalize="none" // voir si c'est maj en début
+                    autoCapitalize="sentences" 
                     autoCorrect={false}
                     style={styles.input}/>
                     <TextInput 
@@ -99,7 +107,7 @@ export default class Signin extends Component {
                     value={this.state.firstName}
                     returnKeyType="next"
                     onSubmitEditing={()=> this.pseudoInput.focus()}
-                    autoCapitalize="none"
+                    autoCapitalize="sentences"
                     autoCorrect={false}
                     style={styles.input}
                     ref={(input) =>this.firstNameInput = input}/>

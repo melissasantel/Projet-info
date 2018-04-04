@@ -10,10 +10,11 @@ import Abbonnement from '../scene/Abbonnement/Abbonnement';
 import Parameters from '../scene/Parameters/Parameters';
 import EcrirePage from '../scene/Diary/EcrirePage';
 import MesCarnets from '../scene/Diary/MesCarnets';
-import SignIn from '../scene/Authentification/Authentification';
-import SignUp from '../scene/Register/Register';
 import Post from '../scene/Photos/Post';
-
+import ProfilSetUp from '../scene/Parameters/ProfilSetUp';
+import UdapteEmail from '../scene/Parameters/UpdateEmail';
+import DetailsCarnet from '../scene/Diary/DetailsCarnet';
+import Pages from '../scene/Diary/Pages';
 // Mise en place de la navigation au sein de l'application
 
 export default class Navigation extends Component{
@@ -42,6 +43,12 @@ const RootStack1 = StackNavigator({
     ParametersScreen :{
       screen : Parameters
     },
+    ProfilSetUpScreen:{
+      screen : ProfilSetUp
+    },
+    UdapteEmailScreen:{
+      screen : UdapteEmail
+    },
 },
   {
     initialRouteName: 'ProfilScreen',
@@ -58,6 +65,12 @@ const RootStack2 = StackNavigator({
     CreerCarnetScreen :{
       screen : CreerCarnet
     },  
+    DetailsCarnetScreen: {
+      screen : DetailsCarnet
+    },
+    PageScreen:{
+      screen: Pages
+    },
 },
   {
     initialRouteName: 'MesCarnetScreen',
@@ -71,6 +84,9 @@ const RootStack3 = StackNavigator({
     PostScreen: {
       screen : Post
     },
+    HomeScreen : {
+      screen : Acceuil
+  },
 },
   {
     initialRouteName : 'PhotosScreen',
@@ -101,9 +117,9 @@ const BarreNavigation =  TabNavigator({
       if (routeName === 'Acceuil') {
         iconName =`ios-home${focused ? '' : '-outline'}`;
       } else if (routeName === 'Photos') {
-        iconName = `ios-camera${focused ? '' : '-outline'}`;
+        iconName = `ios-images${focused ? '' : '-outline'}`;
       } else if (routeName === 'Carnet') {
-        iconName = `ios-quote${focused ? '' : '-outline'}`;
+        iconName = `ios-bookmarks${focused ? '' : '-outline'}`;
       } else if (routeName === 'Profil') {
         iconName = `ios-person${focused ? '' : '-outline'}`;
       }

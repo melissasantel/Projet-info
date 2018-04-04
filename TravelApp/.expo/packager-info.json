@@ -1,5 +1,8 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 9272
+  "packagerPid": 8000,
+  "expoServerNgrokUrl": "https://4n-ybp.msantel.travelapp.exp.direct",
+  "packagerNgrokUrl": "https://packager.4n-ybp.msantel.travelapp.exp.direct",
+  "ngrokPid": 4272
 }

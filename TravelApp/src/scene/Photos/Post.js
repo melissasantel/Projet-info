@@ -12,7 +12,7 @@ export default class Post extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-          description :'',  
+          description :'',
           date:'',
           users:null,
           location:'',
@@ -37,6 +37,7 @@ export default class Post extends React.Component {
             contenue:contenue.toString(),
             user : userId.toString(),
         })
+        
     }
 
     render(){

@@ -13,19 +13,43 @@ export default class CreerCarnet extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      date:'',
+      user:'',
+      userEmail:'',
       title :'', 
       image: null, 
-      description:'',
-      nbPage:0,
-      
-       
+      description:'',        
   }
   this._pickImage = this._pickImage.bind(this)
   this._delete=this._delete.bind(this)
+  this.carnetRef = this.getRef().child('Carnets');
+  this._addCarnet=this._addCarnet.bind(this);
   } 
+
   static navigationOption ={
     headerTitle:'Création',
   };
+
+  componentDidMount() {
+    this.setState({user:firebase.auth().currentUser});
+        if (this.state.user){
+            this.setState({userEmail: this.state.user.email})
+        }  
+  } 
+
+  getRef(){
+    return firebase.database().ref();
+  }
+
+  _addCarnet = (description,date,location,contenue,userEmail,postRef) =>{
+    carnetRef.push({
+        description : description.toString(),
+        date: date.toString(),
+        location: date.toString(),
+        contenue:contenue.toString(),
+        user : userId.toString(),
+    })
+  }
 
   _pickImage= async() =>{
     let result = await ImagePicker.launchImageLibraryAsync({
