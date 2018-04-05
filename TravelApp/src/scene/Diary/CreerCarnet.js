@@ -5,50 +5,39 @@ import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
-import {ImagePicker} from 'expo';
-
-//Entrer les données dans la bases de données. 
+import {ImagePicker} from 'expo'; 
 
 export default class CreerCarnet extends React.Component {
   constructor(props){
+    var today = new Date();
     super(props);
     this.state = {
-      date:'',
-      user:'',
-      userEmail:'',
       title :'', 
       image: null, 
-      description:'',        
+      description:'',
+      date:today.getDate().toString()+'/'+parseInt(today.getMonth()+1).toString()+'/'+today.getFullYear(),
+      userEmail:'', 
+      message:'',
+      chilkey:'',
   }
   this._pickImage = this._pickImage.bind(this)
   this._delete=this._delete.bind(this)
-  this.carnetRef = this.getRef().child('Carnets');
-  this._addCarnet=this._addCarnet.bind(this);
+  this.carnetRef = this.getRef().child('Carnets')
+  this._addCarnet=this._addCarnet.bind(this)
   } 
-
   static navigationOption ={
-    headerTitle:'Création',
+    headerTitle:'Nouveau carnet',
   };
 
-  componentDidMount() {
+  /*componentDidMount() {
     this.setState({user:firebase.auth().currentUser});
         if (this.state.user){
-            this.setState({userEmail: this.state.user.email})
-        }  
-  } 
+          this.setState({userEmail:this.state.user.email})
+        }
+}*/
 
   getRef(){
     return firebase.database().ref();
-  }
-
-  _addCarnet = (description,date,location,contenue,userEmail,postRef) =>{
-    carnetRef.push({
-        description : description.toString(),
-        date: date.toString(),
-        location: date.toString(),
-        contenue:contenue.toString(),
-        user : userId.toString(),
-    })
   }
 
   _pickImage= async() =>{
@@ -68,7 +57,30 @@ export default class CreerCarnet extends React.Component {
     this.setState({image:null});
   }
 
-  //TODO Creer un carnet : Titre, description, photo de couverture suivant pour écrire une page
+  _addCarnet = (title,description,date,image,carnetRef) =>{
+    if (description === '' || image === null || title === '' ){
+        this.setState({message : "Veuillez remplir tout les champs"})
+    }
+    else{
+      var childkey=''
+      const user = firebase.auth().currentUser
+      const userEmail = user.email
+      carnetRef.push({
+          titre: description.toString(),
+          description : description.toString(),
+          date: date.toString(),
+          image:image.toString(),
+          user : userEmail.toString(),
+      }).then(
+        this.carnetRef.limitToLast(1).on('child_added', function(childSnapshot) {
+          childkey = childSnapshot.key;
+          
+         }), 
+         this.props.navigation.navigate('EcrirePageScreen', {keyCarnet :childkey})
+      )
+    }
+  }
+
   render() {
     const {navigate} = this.props.navigation;
     let {image} = this.state;
@@ -81,6 +93,7 @@ export default class CreerCarnet extends React.Component {
                     onChangeText={(text)=>this.setState({title: text})}
                     value={this.state.title}
                     returnKeyType="next"
+                    autoCapitalize="sentences"
                     onSubmitEditing={()=> this.descriptionInput.focus()}
                     autoCorrect={false}
                     style={styles.inputCarnet}
@@ -104,13 +117,14 @@ export default class CreerCarnet extends React.Component {
             <TextInput 
                     onChangeText={(text)=>this.setState({description: text})}
                     value={this.state.description}
-                    returnKeyType="next"
-                    onSubmitEditing={()=> this.pageInput.focus()}
+                    returnKeyType="go"
+                    autoCapitalize="sentences"
                     style={styles.inputCarnet}
                     ref={(input) =>this.descriptionInput = input}
             />
             <View style={styles.PickContainer}>
-            <TouchableOpacity style={styles.btnPick} onPress={()=>this.props.navigation.navigate('EcrirePageScreen')}>
+            <Text>{this.state.message}</Text>
+            <TouchableOpacity style={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
               <Text>Créer une page</Text>
             </TouchableOpacity>
             </View>

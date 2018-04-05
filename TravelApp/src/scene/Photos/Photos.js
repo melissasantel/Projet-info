@@ -12,7 +12,6 @@ import { styles } from '../../styles/styles';
 export default class Photo extends React.Component {
   constructor(props){
     super(props)
-
     this.state = {
         user:null,
         image: null,
@@ -118,7 +117,7 @@ export default class Photo extends React.Component {
                 <Text style={styles.btnTextPost}>ANNULER</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btnPost}
-            onPress={()=>{this.props.navigation.navigate('PostScreen', {userId :this.state.user.uid, imageUri: image,});}}>
+            onPress={()=>{this.props.navigation.navigate('PostScreen', {userEmail :this.state.user.email, imageUri: image,});}}>
                 <Text style={styles.btnTextPost}>SUIVANT</Text>
             </TouchableOpacity>
           </View>

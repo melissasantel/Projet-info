@@ -48,7 +48,6 @@ export default class MesCarnets extends React.Component {
                     title: child.val().titre,
                     photo: child.val().couverture,
                     descrip: child.val().description,
-                    nbPages: child.val().nbPage,
                     _key: child.key
                 });
             });
@@ -73,7 +72,6 @@ export default class MesCarnets extends React.Component {
                     <Text style={styles.postTitle}>{carnet.title}</Text>
                 </TouchableOpacity>
                 <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
-                <Text style={styles.pagesCarnet}>Pages : {carnet.nbPages}</Text>
             </View>
       </View>
         )

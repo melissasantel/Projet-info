@@ -5,42 +5,52 @@ import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
-import CreerNouveau from './CreerCarnet';
+import Icons from 'react-native-vector-icons/Feather';
 
 
 export default class EcrirePage extends React.Component {
     constructor(props){
+        var today = new Date();
         super(props);
         this.state = { 
-          page:'', 
+          texte:'',
+          weather:'',
+          location:'',
+          image:'',
+          date:today.getDate().toString()+'/'+parseInt(today.getMonth()+1).toString()+'/'+today.getFullYear(), 
       }
         
       } 
       static navigationOption ={
-        header:null,
+        header:'Nouvelle page',
       };
-//TODO  Utilisateur peut écrire sur sont carnet, se géolocaliser... 
+
     render() {
        
           return (
               <ViewContainer>
                   <StatusbarBackground/>
-                  <TouchableOpacity onPress={()=>this.props.navigation.navigate('CreerNouveau')}>
-                      <Text>Creer un carnet</Text>
-                  </TouchableOpacity>
-
-                  <Text>Page : </Text>
-            <TextInput 
-                    placeholder="Ecriver votre première page"
-                    placeholderTextColor='#66CDAA'
-                    onChangeText={(text)=>this.setState({page: text})}
-                    value={this.state.page}
-                    returnKeyType="next"
-                    autoCorrect={false}
+                  <Text>Date : {this.state.date}</Text>    
+                  <Text>Weather :  </Text>  
+                  <Icons name='sun' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'sun'})} />
+                  <Icons name='cloud' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'cloud'})} />
+                  <Icons name='cloud-rain' type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'rain'})} />
+                  <Icons name='cloud-snow' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'snow'})} />
+                  <Text>Location: </Text> 
+                  <TextInput
+                    placeholder="Ecrivez vos premières lignes"
+                    editable = {true}
+                    maxLength = {40}
+                    multiline = {true}
+                    numberOfLines = {20}
+                    autoCapitalize="sentences"
+                    autoCorrect={true}
                     style={styles.input}
-                    ref={(input) =>this.pageInput = input}
-            />
-                  <Text>Page</Text>
+                    onChangeText={(text) => this.setState({texte: text})}
+                    value={this.state.texte}
+                    ref={(input) =>this.textInput = input}
+       />           
+                  
                   </ViewContainer>
 
           )

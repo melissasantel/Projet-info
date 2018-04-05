@@ -8,8 +8,15 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 
 export default class DetailsCarnet extends React.Component {
     render(){
+        const {navigate} = this.props.navigation;
         return (
+            <ViewContainer>
             <Text> Pages du carnets sélectionnés</Text>
+            <TouchableOpacity onPress={()=>this.props.navigation.navigate('EcrirePageScreen')}>
+            <Text>Créer une page</Text>
+            </TouchableOpacity>
+            </ViewContainer>
+
         )
     }
     /*constructor(props){
