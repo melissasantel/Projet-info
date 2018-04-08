@@ -6,7 +6,8 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
 import SwitchButton from '../../components/SwitchButton';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import {ImagePicker} from 'expo'; 
+import uuid from 'uuid';
 
 export default class ProfilSetUp extends Component {
     constructor(props) {
@@ -31,8 +32,7 @@ export default class ProfilSetUp extends Component {
         this.setState({user:firebase.auth().currentUser});
             if (this.state.user){
                 this.renderUserData(this.state.user)
-            }
-        
+            }      
     }
 
     renderUserData(user){ 
@@ -52,8 +52,18 @@ export default class ProfilSetUp extends Component {
         this.setState({switch1Value: value})
         console.log('Switch 1 is: ' + value)
     }
-
-   
+    _pickImage= async() =>{
+        let result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          aspect: [4,3],
+        });
+    
+        console.log(result);
+    
+        if(!result.cancelled){
+          this._handleImagePicked(result.uri);
+        }
+      };
 
     updateUserData(pseudo,profil_picture,visible,description){
         var userId= this.state.user.uid;
@@ -66,21 +76,37 @@ export default class ProfilSetUp extends Component {
         var updates={};
         updates['users/'+ userId] = updateData;
         return firebase.database().ref().update(updates);
-        this.setState({message:'Les modifications ont été réalisé'})
     }
-     
+
+    _handleImagePicked = async pickerResult => {
+        try {
+          this.setState({ uploading: true });
+          if (!pickerResult.cancelled){
+            uploadUrl = await uploadImageAsync(pickerResult);
+            this.setState({ profil_picture: uploadUrl});
+        
+          }
+        } catch (e) {
+          console.log(e);
+          alert("Le chargement de l'image n'a pas réussis, désolé :(");
+        } finally {
+          this.setState({ uploading: false });
+        }
+      };
     
 render() {
     const {navigate} = this.props.navigation;
+    let {profil_picture} = this.state;
         return (
             <ScrollView contentContainerStyle={styles.contentContainer}>
                 <ViewContainer>
                 <KeyboardAvoidingView behavior="padding" style={styles.container}>
                     <View style={styles.profilPicture}>
                         <View style={styles.profilPictureBorder}>
-                        <Image source ={{uri:this.state.profil_picture}}/>
+                        { profil_picture &&
+                        <Image source ={{uri:profil_picture}} style={styles.couverturePicker}/>}
                         </View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={this._pickImage}>
                             <Text>Modifier la photo de profil</Text>
                         </TouchableOpacity>
                     </View>
@@ -91,7 +117,6 @@ render() {
                             onChangeText={(text)=>this.setState({pseudo: text})}
                             value={this.state.pseudo}
                             returnKeyType="next"
-                            onSubmitEditing={()=> this.firstNameInput.focus()}
                             autoCapitalize="none" 
                             autoCorrect={false}
                             style={styles.inputParameters}/>
@@ -106,7 +131,7 @@ render() {
                         autoCapitalize="sentences"
                         autoCorrect={false}
                         style={styles.inputParameters}
-                        ref={(input) =>this.pseudoInput = input}/>
+                        />
                     </View>
                     <View style={styles.setUpContainer}>
                         <Text style={styles.lblSetUp}>Email :</Text>
@@ -136,4 +161,15 @@ render() {
         )
     }
 }
-
+async function uploadImageAsync(uri) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const ref = firebase
+      .app()
+      .storage("gs://travelapp-29172.appspot.com")
+      .ref('ProfilImage/')
+      .child(uuid.v4())
+  
+    const snapshot = await ref.put(blob);
+    return snapshot.downloadURL;
+  }

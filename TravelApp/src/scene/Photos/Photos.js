@@ -5,9 +5,8 @@ import {ImagePicker} from 'expo';
 import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
+import uuid from 'uuid';
 
-//TODO enregistré les images dans la BDD et les associées à un utilisateurs.
-//Les ajoutées aux postes cf sur Gaetan 
 
 export default class Photo extends React.Component {
   constructor(props){
@@ -40,7 +39,7 @@ export default class Photo extends React.Component {
     console.log(result);
 
     if(!result.cancelled){
-      this.setState({image:result.uri});
+      this._handleImagePicked(result.uri);
     }
   };
 
@@ -54,14 +53,43 @@ export default class Photo extends React.Component {
 
    if(!result1.cancelled)
    {
-     this.setState({image:result1.uri});
+    this._handleImagePicked(result1.uri);
    }
 
  };
  _removePictures(){
-    this.setState({image :null});
-};
+    // Create a reference to the file to delete
+    var Ref = firebase.app()
+      .storage("gs://travelapp-29172.appspot.com")
+      .ref()
+      .child(this.state.image);
+
+    // Delete the file
+    Ref.delete().then(function() {
+      this.setState({image :null});
+    }).catch(function(error) {
+      console.log(error.message)
+  // Uh-oh, an error occurred!
+});
   
+};
+
+_handleImagePicked = async pickerResult => {
+  try {
+    this.setState({ uploading: true });
+    if (!pickerResult.cancelled){
+      uploadUrl = await uploadImageAsync(pickerResult);
+      this.setState({ image: uploadUrl});
+  
+    }
+  } catch (e) {
+    console.log(e);
+    alert("Le chargement de l'image n'a pas réussis, désolé :(");
+  } finally {
+    this.setState({ uploading: false });
+  }
+};
+
   render() {
     const {navigate} = this.props.navigation;
 
@@ -117,7 +145,7 @@ export default class Photo extends React.Component {
                 <Text style={styles.btnTextPost}>ANNULER</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.btnPost}
-            onPress={()=>{this.props.navigation.navigate('PostScreen', {userEmail :this.state.user.email, imageUri: image,});}}>
+            onPress={()=>{this.props.navigation.navigate('PostScreen', {imageUri: this.state.image});}}>
                 <Text style={styles.btnTextPost}>SUIVANT</Text>
             </TouchableOpacity>
           </View>
@@ -128,6 +156,18 @@ export default class Photo extends React.Component {
     
   };
 
-};
+}
+async function uploadImageAsync(uri) {
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const ref = firebase
+    .app()
+    .storage("gs://travelapp-29172.appspot.com")
+    .ref('PostImage/')
+    .child(uuid.v4())
+
+  const snapshot = await ref.put(blob);
+  return snapshot.downloadURL;
+}
 
 

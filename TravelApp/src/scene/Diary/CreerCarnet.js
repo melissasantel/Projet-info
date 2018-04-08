@@ -6,19 +6,23 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import {ImagePicker} from 'expo'; 
+import uuid from 'uuid';
 
 export default class CreerCarnet extends React.Component {
   constructor(props){
     var today = new Date();
     super(props);
     this.state = {
+      user:firebase.auth().currentUser,
       title :'', 
       image: null, 
       description:'',
       date:today.getDate().toString()+'/'+parseInt(today.getMonth()+1).toString()+'/'+today.getFullYear(),
-      userEmail:'', 
+      author:'', 
       message:'',
       chilkey:'',
+      usableCreer:false,
+      usablePage:true
   }
   this._pickImage = this._pickImage.bind(this)
   this._delete=this._delete.bind(this)
@@ -28,6 +32,11 @@ export default class CreerCarnet extends React.Component {
   static navigationOption ={
     headerTitle:'Nouveau carnet',
   };
+  componentDidMount() {
+    this.setState({user:firebase.auth().currentUser});
+    firebase.database().ref('users/' + this.state.user.uid+'/pseudonyme').on("value", snapshot => {
+      this.setState({author: snapshot.val()})});
+  }
 
   getRef(){
     return firebase.database().ref();
@@ -42,38 +51,69 @@ export default class CreerCarnet extends React.Component {
     console.log(result);
 
     if(!result.cancelled){
-      this.setState({image:result.uri});
+      this._handleImagePicked(result.uri);
     }
   };
 
   _delete(){
-    this.setState({image:null});
-  }
+    // Create a reference to the file to delete
+    var Ref = firebase.app()
+      .storage("gs://travelapp-29172.appspot.com")
+      .ref('CarnetImages/')
+      .child(this.state.image);
+
+    // Delete the file
+    Ref.delete().then(function() {
+      this.setState({image :null});
+    }).catch(function(error) {
+      console.log(error.message)
+  // Uh-oh, an error occurred!
+  });
+}
 
   _addCarnet = (title,description,date,image,carnetRef) =>{
+    this.setState({usableCreer:true,usablePage:false})
     if (description === '' || image === null || title === '' ){
-        this.setState({message : "Veuillez remplir tout les champs"})
+        this.setState({usableCreer:false,usablePage:true})
+        alert("Veuillez remplir tous les champs")
     }
     else{
-      var childkey=''
       var user = firebase.auth().currentUser
       var userEmail = user.email
-      carnetRef.push({
+      var postData = {
           titre: title.toString(),
           description : description.toString(),
           date: date.toString(),
           image: image.toString(),
-          user : userEmail.toString(),
-          pages: title.toString()+'Pages',
-      }).then(
-        this.carnetRef.limitToLast(1).on('child_added', function(childSnapshot) {
-          childkey = childSnapshot.key;
-          
-         }), 
-         this.props.navigation.navigate('EcrirePageScreen', {keyCarnet :childkey})
-      )
+          author : this.state.author,
+          pages: [],
+      };
+      // Get a key for a new Post.
+      var newPostKey = firebase.database().ref().child('Carnets').push().key; 
+      this.setState({chilkey:newPostKey})
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var updates={};
+      updates['/Carnets/' + newPostKey]=postData;
+      updates['/users/'+this.state.user.uid+'/user_carnet/'+newPostKey]=postData; 
+      return firebase.database().ref().update(updates);
     }
   }
+
+  _handleImagePicked = async pickerResult => {
+    try {
+      this.setState({ uploading: true });
+      if (!pickerResult.cancelled){
+        uploadUrl = await uploadImageAsync(pickerResult);
+        this.setState({ image: uploadUrl});
+    
+      }
+    } catch (e) {
+      console.log(e);
+      alert("Le chargement de l'image n'a pas réussis, désolé :(");
+    } finally {
+      this.setState({ uploading: false });
+    }
+  };
 
   render() {
     const {navigate} = this.props.navigation;
@@ -117,14 +157,29 @@ export default class CreerCarnet extends React.Component {
                     ref={(input) =>this.descriptionInput = input}
             />
             <View style={styles.PickContainer}>
-            <Text>{this.state.message}</Text>
-            <TouchableOpacity style={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
-              <Text>Créer une page</Text>
+            <TouchableOpacity disabled={this.state.usableCreer}falsee={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
+              <Text>Créer mon carnet</Text>
             </TouchableOpacity>
+            <TouchableOpacity disabled={this.state.usablePage}falsee={styles.btnPick} onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:this.state.chilkey})}>
+              <Text>Créer ma page</Text>
+            </TouchableOpacity>
+
             </View>
           </KeyboardAvoidingView> 
         </ViewContainer>
         </ScrollView>
       );
   }
+}
+async function uploadImageAsync(uri) {
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  const ref = firebase
+    .app()
+    .storage("gs://travelapp-29172.appspot.com")
+    .ref('CarnetImages/')
+    .child(uuid.v4())
+
+  const snapshot = await ref.put(blob);
+  return snapshot.downloadURL;
 }

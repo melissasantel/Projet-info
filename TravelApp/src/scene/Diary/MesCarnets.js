@@ -13,10 +13,10 @@ export default class MesCarnets extends React.Component {
         super(props);
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
         this.state = { 
-            user :null,
+            user :'',
+            userIdentifiant:'',
             carnetDataSource: ds,
         }
-        this.carnetsRef= this.getRef().child('Carnets');
         this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
@@ -26,22 +26,36 @@ export default class MesCarnets extends React.Component {
         headerTitle: 'Carnets de voyage',
     };
 
-    getRef(){
-        return firebase.database().ref();
-    }
 
-    componentWillMount(){
-        this.getCarnet(this.carnetsRef);
+    componentWillMount(){ 
+        var userId='';
+        firebase.auth().onAuthStateChanged((user)=>{
+            if(user){
+                userId = firebase.auth().currentUser.uid;
+                this.setState({userIdentifiant:userId})
+                var carnetRef = firebase.database().ref('users/'+userId).child('user_carnet');
+                this.getCarnet(carnetRef);
+            }
+        })
     }
 
     componentDidMount() {
+        var userId='';
         firebase.auth().onAuthStateChanged((user)=>{
-            this.setState({user});
-        }), 
-        this.getCarnet(this.carnetsRef)
+            this.setState({user})
+            if(user){
+                userId = firebase.auth().currentUser.uid;
+                console.log(user.Id)
+                this.setState({userIdentifiant:userId})
+                var carnetRef = firebase.database().ref('users/'+userId).child('user_carnet');
+                this.getCarnet(carnetRef);
+            }
+        })
+        
     }
     deleteFile(keyCarnet){
         let ref = firebase.database().ref().child('Carnets/'+keyCarnet);
+        let ref2=firebase.database().ref().child('users/'+this.state.userIdentifiant+ '/user_carnet/'+keyCarnet);
         Alert.alert(
             // This is Alert Dialog Title
             'Suppression du carnet',
@@ -51,7 +65,7 @@ export default class MesCarnets extends React.Component {
               //First Cancel Button in Alert Dialog.
               {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
               //Second OK Button in Alert Dialog
-              {text: 'OK', onPress: () => ref.remove()},  
+              {text: 'OK', onPress: () => {ref.remove(), ref2.remove()}},  
             ]
           )
        
@@ -62,7 +76,7 @@ export default class MesCarnets extends React.Component {
             snap.forEach((child) => {
                 carnets.push({
                     title: child.val().titre,
-                    photo: child.val().couverture,
+                    photo: child.val().image,
                     descrip: child.val().description,
                     _key: child.key
                 });

@@ -28,22 +28,22 @@ export default class Acceuil extends React.Component {
   }
 
   componentWillMount(){
-    this.getUserPost(this.postRef);
+    this.getPost(this.postRef);
   }
 
   componentDidMount(){
-    this.getUserPost(this.postRef);
+    this.getPost(this.postRef);
   }
 
-  getUserPost(postRef){
-    //let post=[{title:'Nom utilisateur',contenu:'photo/video',description:'voici la description'}, 
-    //{title:'Nom utilisateur1',contenu:'photo/video1',description:'voici la description1'}];
+  getPost(postRef){
     postRef.on('value', (snap)=>{
       let post=[];
       snap.forEach((child) => {
         post.push({
-          title: child.val().users,
-          photo: child.val().contenue,
+          title: child.val().author,
+          location:child.val().location,
+          date : child.val().date,
+          photo: child.val().image,
           descrip: child.val().description,
           _key: child.key
         }); 
@@ -63,16 +63,10 @@ export default class Acceuil extends React.Component {
         <TouchableOpacity onPress={() => {this.pressRow(post);}}>
           <Text style={styles.postTitle}>{post.title}</Text>
         </TouchableOpacity>
+        <Text style={styles.postText}>{post.location}</Text>
+        <Text style={styles.postText}>{post.date}</Text>
         <View style={styles.postPhotoContainer}>
         <Image source={{uri :post.photo}} style={styles.photoPost}></Image>
-        </View>
-        <View style={styles.likeComment}>
-        <TouchableOpacity>
-          <Image source={require('../../image/favorite.png')}/>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image style={styles.comment} source={require('../../image/chat2.png')}/>
-        </TouchableOpacity>
         </View>
         <Text style={styles.postText}>{post.descrip}</Text>
       </View>

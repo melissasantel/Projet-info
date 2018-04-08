@@ -30,17 +30,22 @@ export default class Parameters extends Component {
     signOutUser = async () => {
         try {
             await firebase.auth().signOut();
+            this.props.navigation.navigate('ProfilScreen');
         }catch(e){
             console.log(e);
         }
     }
     deleteAccount(){
-        user.delete().then(function() {
-            // User deleted.
+        this.state.user.delete().then(function() {
             console.log('delete user')
-          }).catch(function(error) {
+            let ref = firebase.database().ref().child('users/'+this.state.user.uid);
+            ref.remove();
+            this.props.navigation.navigate('ProfilScreen')
+          })
+          .catch(function(error) {
             // An error happened.
             console.log(error.message)
+            alert('Une erreur est apparue. Déconnectez-vous puis reconnectez-vous avant de réessayer')
           });
     }
 
@@ -54,7 +59,7 @@ export default class Parameters extends Component {
               //First Cancel Button in Alert Dialog.
               {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
               //Second OK Button in Alert Dialog
-              {text: 'OK', onPress: () => this.deleteAccount()},  
+              {text: 'OK', onPress: () => {this.deleteAccount()}},  
             ]
           )
     }

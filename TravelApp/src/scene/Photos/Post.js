@@ -12,14 +12,13 @@ export default class Post extends React.Component {
         this.state = {
           description :'',
           date:today.getDate().toString()+'/'+parseInt(today.getMonth()+1).toString()+'/'+today.getFullYear(),
-          users:'',
+          author:'',
           location:'',
           uploading:false,
-          image:'',
-          reussite:'false'
+          reussite:false, 
+          user:firebase.auth().currentUser,
           
         }
-        this.postRef= this.getRef().child('post');
         this._addPost=this._addPost.bind(this);
 
     }
@@ -28,55 +27,39 @@ export default class Post extends React.Component {
         headerTitle:'Nouvelle publication',
       };
 
-    getRef(){
-        return firebase.database().ref();
+    componentDidMount() {
+      this.setState({user:firebase.auth().currentUser});
+      firebase.database().ref('users/' + this.state.user.uid+'/pseudonyme').on("value", snapshot => {
+        this.setState({author: snapshot.val()})});
     }
-// A voir pourquoi ça fonctionne pas - lancer la fonction d'ajout post dans firebase
-// quelques seconde après pour avoir le temps d'avoir l'image dans la le state
-    _addPost = (description,date,location,imageUri,userEmail) =>{
-        const postRef = this.postRef
-        this._handleImagePicked(imageUri)
-          if (this.state.reussite){
-            console.log('salut'),
-              postRef.push({
-                description : description.toString(),
+
+    _addPost = (description,date,location,imageUri)=>{
+      // A post entry.
+        var postData = {
+          description : description.toString(),
                 date: date.toString(),
                 location: location.toString(),
-                image: this.state.image,
-                user : userEmail.toString(),
-            })
-          }
-          else {
-            alert('Une erreur est apparue')
-          }
+                image: imageUri.toString(),
+                author : this.state.author
+        };
+        // Get a key for a new Post.
+        var newPostKey = firebase.database().ref().child('post').push().key; 
+        // Write the new post's data simultaneously in the posts list and the user's post list.
+        var updates={};
+        updates['/post/' + newPostKey]=postData;
+        updates['/users/'+this.state.user.uid+'/user_post/'+newPostKey]=postData; 
+        return firebase.database().ref().update(updates);
+
         /*.then(
           this.props.navigation.navigate('HomeScreen')
         )  */           
     }
 
-    _handleImagePicked = async imageUri => {
-        try {
-          this.setState({ uploading: true });
-          if (imageUri){
-            uploadUrl = await uploadImageAsync(imageUri);
-            this.setState({ image: uploadUrl});
-            if (this.state.image){
-              this.setState({reussite:true})
-            }
-          }
-        } catch (e) {
-          console.log(e);
-          alert("Le chargement de l'image n'a pas réussis, désolé :(");
-        } finally {
-          this.setState({ uploading: false });
-        }
-      };
     
 
     render(){
         var { params } = this.props.navigation.state; 
-        var imageUri = params ? params.imageUri : null;
-        var userEmail = params ? params.userEmail : null; 
+        var imageUri = params ? params.imageUri : null; 
         var {navigate} = this.props.navigation;
         return (
             <ViewContainer>
@@ -105,7 +88,7 @@ export default class Post extends React.Component {
             </TextInput>
             </View>
               <TouchableOpacity style={styles.btnPost}
-                onPress={() => {this._addPost(this.state.description,this.state.date,this.state.location,imageUri,userEmail)}}>
+                onPress={() => {this._addPost(this.state.description,this.state.date,this.state.location,imageUri)}}>
                 <Text style={styles.btnTextPost}>PUBLIER</Text>
               </TouchableOpacity>
           </KeyboardAvoidingView> 
@@ -113,15 +96,3 @@ export default class Post extends React.Component {
         )
     }
 }
-async function uploadImageAsync(uri) {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const ref = firebase
-      .app()
-      .storage("gs://travelapp-29172.appspot.com")
-      .ref()
-      .child('images')
-  
-    const snapshot = await ref.put(blob);
-    return snapshot.downloadURL;
-  }

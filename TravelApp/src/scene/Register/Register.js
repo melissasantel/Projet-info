@@ -42,22 +42,18 @@ export default class Signin extends Component {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
             .then (console.log('Connexion réussit')
             )
-            .catch(function(error) {
+            .catch(function(error){
                 // Gestion des erreurs
                 console.log(error.code)
-                console.log(error.message)             
+                console.log(error.message)
+                this.setState({error:error.message})             
             }) 
         } 
         else {
-            this.setState ({error: 'Les mots de passes ne sont pas identiques'});     
+            this.setState ({error:'Les mots de passes ne sont pas identiques'});     
         }
-        console.log('passe par la'),
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log('Je passe'),
-                userId = user.uid,
-                console.log(userId),
-                console.log(nom),
                 firebase.database().ref ('users/' + user.uid).set({
                     nom:nom.toString(),
                     prenom:prenom.toString(),
@@ -65,6 +61,8 @@ export default class Signin extends Component {
                     profil_picture:profilPicture.toString(),
                     visible_account:'true',
                     description:'',
+                    user_post:[],
+                    user_carnet:[],
                 });
                 
             } /*else {

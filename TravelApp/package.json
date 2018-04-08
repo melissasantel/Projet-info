@@ -25,6 +25,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-26.0.0.tar.gz",
     "react-native-image-picker": "^0.26.7",
     "react-native-modal-datetime-picker": "^5.1.0",
-    "react-navigation": "1.5.8"
+    "react-navigation": "1.5.8",
+    "uuid": "^3.2.1"
   }
 }
