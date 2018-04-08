@@ -29,13 +29,6 @@ export default class CreerCarnet extends React.Component {
     headerTitle:'Nouveau carnet',
   };
 
-  /*componentDidMount() {
-    this.setState({user:firebase.auth().currentUser});
-        if (this.state.user){
-          this.setState({userEmail:this.state.user.email})
-        }
-}*/
-
   getRef(){
     return firebase.database().ref();
   }
@@ -63,14 +56,15 @@ export default class CreerCarnet extends React.Component {
     }
     else{
       var childkey=''
-      const user = firebase.auth().currentUser
-      const userEmail = user.email
+      var user = firebase.auth().currentUser
+      var userEmail = user.email
       carnetRef.push({
-          titre: description.toString(),
+          titre: title.toString(),
           description : description.toString(),
           date: date.toString(),
-          image:image.toString(),
+          image: image.toString(),
           user : userEmail.toString(),
+          pages: title.toString()+'Pages',
       }).then(
         this.carnetRef.limitToLast(1).on('child_added', function(childSnapshot) {
           childkey = childSnapshot.key;

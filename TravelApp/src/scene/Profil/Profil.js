@@ -17,19 +17,19 @@ export default class Profil extends Component {
             pseudo : '',
             imageUri : '',
             description:'',
+            userMail:'',
         };
-        
     }
 
     static navigationOptions ={
       header: null
-
     };
 
    componentDidMount() {
     firebase.auth().onAuthStateChanged((user)=>{
       this.setState({user});
       if (user){
+        this.setState({userMail:user.email})
         this.renderUserData(user)
       } 
    })  
@@ -55,8 +55,7 @@ export default class Profil extends Component {
 
   render() {  
   //si l'utilisateur est connecté il visualise sont profil.
-    if (this.state.user)
-        {
+    if (this.state.user){
           const {navigate} = this.props.navigation;
           return (
             <ScrollView contentContainerStyle={styles.contentContainer}>

@@ -1,10 +1,11 @@
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Image,TouchableOpacity, ListView } from 'react-native';
+import { StyleSheet, Text, View, Image,TouchableOpacity, ListView, Alert } from 'react-native';
 import ViewContainer from '../../components/ViewContainer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
+import Icons from 'react-native-vector-icons/Feather';
 
 
 export default class MesCarnets extends React.Component {
@@ -16,7 +17,7 @@ export default class MesCarnets extends React.Component {
             carnetDataSource: ds,
         }
         this.carnetsRef= this.getRef().child('Carnets');
-
+        this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
     }
@@ -39,7 +40,22 @@ export default class MesCarnets extends React.Component {
         }), 
         this.getCarnet(this.carnetsRef)
     }
-
+    deleteFile(keyCarnet){
+        let ref = firebase.database().ref().child('Carnets/'+keyCarnet);
+        Alert.alert(
+            // This is Alert Dialog Title
+            'Suppression du carnet',
+            // This is Alert Dialog Message. 
+            'Êtes-vous sûr de vouloir supprimer ce carnet ?',
+            [
+              //First Cancel Button in Alert Dialog.
+              {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
+              //Second OK Button in Alert Dialog
+              {text: 'OK', onPress: () => ref.remove()},  
+            ]
+          )
+       
+    }
     getCarnet(carnetsRef){
         carnetsRef.on('value',(snap) => {
             let carnets =[];
@@ -59,7 +75,7 @@ export default class MesCarnets extends React.Component {
     }
     pressRow(carnet){
         console.log(carnet);
-        this.props.navigation.navigate('DetailsCarnetScreen')
+        this.props.navigation.navigate('DetailsCarnetScreen',{keyCarnet: carnet._key})
       }
     renderRow(carnet){
         return(
@@ -72,6 +88,8 @@ export default class MesCarnets extends React.Component {
                     <Text style={styles.postTitle}>{carnet.title}</Text>
                 </TouchableOpacity>
                 <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
+                <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(carnet._key) } />
+                <Icons name='file-plus' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:carnet._key})} />
             </View>
       </View>
         )
@@ -84,11 +102,8 @@ export default class MesCarnets extends React.Component {
             return (
                 <ViewContainer>
                     <View style={styles.btnCreerContainer}>
-                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')}>
-                        <Text style={styles.btnCreer}>Créer </Text>
-                        </TouchableOpacity>
-                        <Image style={styles.logoAjoutCarnet}
-                        source={require('../../image/plus-button.png')}/>
+                        <Text style={styles.btnCreer}>Créer un carnet </Text>
+                        <Icons name='plus-circle' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')} />
                    </View>
                     <ListView dataSource={this.state.carnetDataSource}
                     renderRow={this.renderRow} />

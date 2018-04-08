@@ -5,35 +5,26 @@ import ViewContainer from '../../components/ViewContainer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
+import Icons from 'react-native-vector-icons/Feather';
 
 export default class DetailsCarnet extends React.Component {
-    render(){
-        const {navigate} = this.props.navigation;
-        return (
-            <ViewContainer>
-            <Text> Pages du carnets sélectionnés</Text>
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate('EcrirePageScreen')}>
-            <Text>Créer une page</Text>
-            </TouchableOpacity>
-            </ViewContainer>
-
-        )
-    }
-    /*constructor(props){
+    constructor(props){
         super(props);
+        var { params } = this.props.navigation.state; 
+        var keyCarnet = params ? params.keyCarnet : null;
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
         this.state = { 
             user : firebase.auth().currentUser,
             dataSource: ds,
         }
-        this.Ref= this.getRef().child('Carnets');
-
+        this.Ref= this.getRef().child('Carnets/'+keyCarnet+'/pages/');
+        this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
     }
 
     static navigationOptions ={
-        headerTitle: 'Carnets de voyage',
+        headerTitle: 'Détails du carnet',
     };
 
     getRef(){
@@ -41,49 +32,59 @@ export default class DetailsCarnet extends React.Component {
     }
 
     componentWillMount(){
-        this.getCarnet(this.carnetsRef);
+        this.getPageCarnet(this.Ref);
     }
 
     componentDidMount() {
-        firebase.auth().onAuthStateChanged((user)=>{
-            this.setState({user});
-        }), 
-        this.getCarnet(this.carnetsRef)
+        user : firebase.auth().currentUser,
+        this.getPageCarnet(this.Ref)
     }
 
-    getCarnet(carnetsRef){
-        carnetsRef.on('value',(snap) => {
-            let carnets =[];
+    deleteFile(keyPage){
+        let ref = firebase.database().ref().child('Carnets/'+keyCarnet);
+        Alert.alert(
+            // This is Alert Dialog Title
+            'Suppression du carnet',
+            // This is Alert Dialog Message. 
+            'Êtes-vous sûr de vouloir supprimer ce carnet ?',
+            [
+              //First Cancel Button in Alert Dialog.
+              {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
+              //Second OK Button in Alert Dialog
+              {text: 'OK', onPress: () => ref.remove()},  
+            ]
+          )
+    }
+
+    getPageCarnet(Ref){
+        Ref.on('value',(snap) => {
+            let pages =[];
             snap.forEach((child) => {
-                carnets.push({
-                    title: child.val().titre,
-                    photo: child.val().couverture,
-                    descrip: child.val().description,
-                    nbPages: child.val().nbPage,
+                pages.push({
+                    titre: child.val().titre,
+                    date: child.val().date,
                     _key: child.key
                 });
             });
             this.setState({
-                carnetDataSource: this.state.carnetDataSource.cloneWithRows(carnets)
+                dataSource: this.state.dataSource.cloneWithRows(pages)
               });
         });
         
     }
-    pressRow(carnet){
-        console.log(carnet);
+    pressRow(page){
+        console.log(page);
+        this.props.navigation.navigate('PageScreen',{keyPage: page._key, titre:page.titre})
       }
-    renderRow(carnet){
+    renderRow(page){
         return(
         <View style={styles.listCarnetContainer}>
-            <View style={styles.carnetCouvContainer}>
-                <Image source={{uri :carnet.photo}} style={styles.couvCarnet}></Image>
-            </View>
             <View style={styles.infoCarnetContainer}>
-                <TouchableOpacity onPress={() => {this.pressRow(carnet);}}>
-                    <Text style={styles.postTitle}>{carnet.title}</Text>
+                <TouchableOpacity onPress={() => {this.pressRow(page);}}>
+                    <Text style={styles.postTitle}>{page.titre}</Text>
                 </TouchableOpacity>
-                <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
-                <Text style={styles.pagesCarnet}>Pages : {carnet.nbPages}</Text>
+                <Text style={styles.CarnetDescrText}>{page.date}</Text>
+                <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(page._key) }/>
             </View>
       </View>
         )
@@ -100,12 +101,12 @@ export default class DetailsCarnet extends React.Component {
                     <Image style={styles.logoAjoutCarnet}
                         source={require('../../image/plus-button.png')}/>
                    </View>
-                    <ListView dataSource={this.state.carnetDataSource}
+                    <ListView dataSource={this.state.dataSource}
                     renderRow={this.renderRow} />
                     </ViewContainer>
             )
         
        
-    }*/
+    }
 
 }
