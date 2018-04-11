@@ -12,10 +12,9 @@ export default class Acceuil extends React.Component {
       postDataSource:ds
       
     }
-    this.postRef=this.getRef().child('post');
+    this.postRef=this.getRef().child('post').orderByChild('visible').equalTo('true');
 
     this.renderRow=this.renderRow.bind(this);
-    this.pressRow=this.pressRow.bind(this);
   }
 
   static navigationOptions ={
@@ -45,6 +44,7 @@ export default class Acceuil extends React.Component {
           date : child.val().date,
           photo: child.val().image,
           descrip: child.val().description,
+          userId: child.val().user,
           _key: child.key
         }); 
       });
@@ -54,19 +54,19 @@ export default class Acceuil extends React.Component {
     });
   }
   
-  pressRow(post){
-    console.log(post);
-  }
   renderRow(post){
+    const {navigate} = this.props.navigation;
     return(
       <View style={styles.postContainer}>
-        <TouchableOpacity onPress={() => {this.pressRow(post);}}>
-          <Text style={styles.postTitle}>{post.title}</Text>
-        </TouchableOpacity>
-        <Text style={styles.postText}>{post.location}</Text>
-        <Text style={styles.postText}>{post.date}</Text>
+        <View style={styles.titreDateContainer}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('UserProfilScreen',{userId:post.userId})}>
+            <Text style={styles.postTitle}>{post.title}</Text>
+          </TouchableOpacity>
+          <Text>{post.date}</Text>
+        </View>
+        <Text>{post.location}</Text>
         <View style={styles.postPhotoContainer}>
-        <Image source={{uri :post.photo}} style={styles.photoPost}></Image>
+          <Image source={{uri :post.photo}} style={styles.photoPost}></Image>
         </View>
         <Text style={styles.postText}>{post.descrip}</Text>
       </View>

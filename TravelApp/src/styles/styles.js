@@ -14,7 +14,6 @@ export const styles = StyleSheet.create ({
     },
     setUpContainer:{
         flexDirection :'row',
-        //justifyContent:'flex-end',
         backgroundColor:'#fff',
         borderBottomColor:'#A9A9A9',
         borderColor:'transparent',
@@ -41,16 +40,29 @@ export const styles = StyleSheet.create ({
         color:'#696969',
     },
     //page de carnet de voyage
+    imagePage:{
+        width:300,
+        height:200,
+        paddingBottom:20,
+    },
+    btnPickPage:{
+        borderRadius :30,
+        padding: 3,
+        borderColor : '#A9A9A9',
+        marginBottom: 10,
+        borderWidth:1, 
+        overflow: 'hidden',
+    },
+    imagePageContainer:{
+        justifyContent:'center',
+        alignItems:'center',
+    },
     couvertureContainer:{
-        flexDirection:'row',
+        flexDirection:'column',
         marginBottom:10,
     }, 
-    couverturePicker:{
-        width: 100,
-        height:100,
-    },
     PickContainer:{
-        flexDirection:'row'
+        flexDirection:'row',
     },
     btnPick:{
         alignItems:'flex-end',
@@ -67,6 +79,9 @@ export const styles = StyleSheet.create ({
         fontWeight: '700',
         fontSize : 14,
         paddingRight :40,
+    },
+    iconCarnet:{
+        paddingRight:30,
     }, 
     inputCarnet:{
         borderBottomWidth: 1,
@@ -94,7 +109,7 @@ export const styles = StyleSheet.create ({
         paddingLeft : 10,
         fontSize:15,
         marginTop: 10,
-        marginRight : 5,
+        marginRight : 10,
     },
     informationContainer:{
         alignItems:'center', 
@@ -118,32 +133,60 @@ export const styles = StyleSheet.create ({
         paddingTop:14, 
         paddingBottom:16
     },
-    carnetCouvContainer:{
-        marginTop: 5,
-        marginBottom : 10,
-        marginRight:10,
-        paddingLeft:10,
-    },
+    
     couvCarnet:{
         width:100,
         height: 100,
     },
     infoCarnetContainer:{
         flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'flex-start',
         
     },
     CarnetDescrText:{
-        textAlign : 'center',
-        paddingRight : 75, 
-        paddingLeft : 5,
+        paddingTop:10,
+        paddingBottom:5,
+        textAlign : 'left',
     },
     pagesCarnet:{
         alignItems:'center',
         justifyContent:'flex-end',
-        
-        //paddingTop:15,
-        //paddingLeft:60,
         fontSize:11,
+    },
+    //page post 
+    
+    inputPost:{
+        borderBottomWidth: 1,
+        borderColor : 'black',
+        height: 20,
+        width:250,  
+        marginBottom:10,
+        color: 'black',
+        paddingHorizontal: 10,
+        fontSize : 14,
+        marginTop:20,
+        
+    },
+    imageLegendeCont:{
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        paddingBottom:16,
+    },
+    labelPost:{
+        fontWeight: '700',
+        fontSize : 14,
+        paddingTop: 20,
+        paddingBottom:10,
+    },
+    iconPage:{
+        paddingTop:20,
+        paddingLeft:10,
+        paddingBottom:10,
+    },
+    weatherStyle:{
+        paddingTop:20,
+        paddingLeft:10,
     },
     //Post acceuil 
     postContainer:{
@@ -155,12 +198,16 @@ export const styles = StyleSheet.create ({
         paddingTop:14, 
         paddingBottom:16,
     },
+    titreDateContainer:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'start',
+    },
     postPhotoContainer:{
         alignItems:'center', 
         marginTop: 5,
         marginBottom : 10,
         marginRight:16,
-    
     },
     photoPost:{
         width:300,
@@ -170,7 +217,8 @@ export const styles = StyleSheet.create ({
         color: '#66CDAA',
         fontWeight: '700',
         fontSize : 16,
-        paddingBottom: 20,
+        paddingBottom: 5,
+        //paddingRight:130,
     },
     postText:{
         fontWeight: '700',
@@ -187,7 +235,7 @@ export const styles = StyleSheet.create ({
 
     //ScrollVview
     contentContainer:{
-        paddingVertical: 20
+        paddingVertical: 30
     },
 
     //Loggin et Signin
@@ -274,16 +322,13 @@ export const styles = StyleSheet.create ({
         height: 300, 
     }, 
     buttonImageContainer:{
-        
         flexDirection:'column',
         justifyContent:'center',
     
     },
     buttonImage: {
         padding:10,
-        backgroundColor : '#FFF',
-        marginTop :20
-     
+        marginTop :20   
     },
     buttonTextImage: {
         color: '#66CDAA',
@@ -309,6 +354,7 @@ export const styles = StyleSheet.create ({
 
     //Profil utilisateur
     infoContainer:{
+        backgroundColor:'#fff',
         borderBottomColor:'#A9A9A9',
         borderColor:'transparent',
         borderWidth:1,
@@ -326,15 +372,22 @@ export const styles = StyleSheet.create ({
         overflow: 'hidden',
         borderRadius : 3
     },
+    couverturePicker:{
+        height: 100, 
+        width: 100, 
+        borderRadius: 55, 
+        overflow: 'hidden'
+    },
     profilPictureBorder: {
         borderWidth: 1,
         borderColor: '#A9A9A9', 
-        height: 110, 
-        width: 110, 
+        height: 100, 
+        width: 100, 
         borderRadius: 55, 
         overflow: 'hidden'
     },
     affichageContainer:{
+        backgroundColor:'#fff',
         flexDirection:'row', 
         alignItems: 'center',
         justifyContent:'center',
@@ -346,9 +399,9 @@ export const styles = StyleSheet.create ({
         padding: 10,
         paddingRight :30, 
         paddingLeft :30,
-        //backgroundColor:'#A9A9A9',
         borderRightColor : '#A9A9A9',
-        borderColor:'transparent',
+        borderColor:'#fff',
+        backgroundColor:'#fff',
         marginTop: 2,
         borderWidth:1, 
         overflow: 'hidden',
@@ -373,7 +426,13 @@ export const styles = StyleSheet.create ({
         alignItems: 'center',
 
     },
+    nameparaContainer:{
+        flexDirection:'row',
+        jutifyContent:'center', 
+        alignItems:'center',
+    },
     nameText: {
+        alignItems:'center',
         fontSize : 20,
         color : '#66CDAA'
     },

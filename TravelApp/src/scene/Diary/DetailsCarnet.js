@@ -14,10 +14,10 @@ export default class DetailsCarnet extends React.Component {
         var keyCarnet = params ? params.keyCarnet : null;
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
         this.state = { 
-            user : firebase.auth().currentUser,
+            userId : '',
             dataSource: ds,
         }
-        this.Ref= this.getRef().child('Carnets/'+keyCarnet+'/pages/');
+        this.Ref= this.getRef('users/'+ userId +'/user_carnet/'+keyCarnet).child('pages');
         this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
@@ -32,11 +32,14 @@ export default class DetailsCarnet extends React.Component {
     }
 
     componentWillMount(){
+        let useruid= ''
+        useruid : firebase.auth().currentUser,
+        this.setState({userId:useruid});
         this.getPageCarnet(this.Ref);
     }
 
     componentDidMount() {
-        user : firebase.auth().currentUser,
+        
         this.getPageCarnet(this.Ref)
     }
 

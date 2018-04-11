@@ -21,8 +21,6 @@ export default class CreerCarnet extends React.Component {
       author:'', 
       message:'',
       chilkey:'',
-      usableCreer:false,
-      usablePage:true
   }
   this._pickImage = this._pickImage.bind(this)
   this._delete=this._delete.bind(this)
@@ -61,11 +59,12 @@ export default class CreerCarnet extends React.Component {
       .storage("gs://travelapp-29172.appspot.com")
       .ref('CarnetImages/')
       .child(this.state.image);
-
     // Delete the file
-    Ref.delete().then(function() {
-      this.setState({image :null});
-    }).catch(function(error) {
+    Ref.delete()
+    .then(
+      this.setState({image :null})
+    )
+    .catch(function(error) {
       console.log(error.message)
   // Uh-oh, an error occurred!
   });
@@ -93,9 +92,9 @@ export default class CreerCarnet extends React.Component {
       this.setState({chilkey:newPostKey})
       // Write the new post's data simultaneously in the posts list and the user's post list.
       var updates={};
-      updates['/Carnets/' + newPostKey]=postData;
       updates['/users/'+this.state.user.uid+'/user_carnet/'+newPostKey]=postData; 
-      return firebase.database().ref().update(updates);
+      firebase.database().ref().update(updates);
+      this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:this.state.chilkey})
     }
   }
 
@@ -122,46 +121,45 @@ export default class CreerCarnet extends React.Component {
         <ScrollView contentContainerStyle={styles.contentContainer}>
         <ViewContainer>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
-          <Text style={styles.label}>Titre du carnet :</Text>
+            <Text style={styles.labelPost}>Choisir une couverture</Text>
+            <View style={styles.couvertureContainer}>
+              { image &&
+              <Image source={{uri :image}} style={styles.couverturePicker} />}
+            </View>
+            <View style={styles.pickContainer}>
+            <TouchableOpacity style={styles.btnPick}
+            onPress={this._pickImage}>
+              <Text > Choisir </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnPick}
+              onPress={()=>this._delete.bind(this)}>
+                <Text>Supprimer</Text>
+              </TouchableOpacity>
+          </View>
+          <Text style={styles.labelPost}>Titre du carnet :</Text>
           <TextInput 
                     onChangeText={(text)=>this.setState({title: text})}
                     value={this.state.title}
+                    maxLength={25}
                     returnKeyType="next"
                     autoCapitalize="sentences"
                     onSubmitEditing={()=> this.descriptionInput.focus()}
                     autoCorrect={false}
                     style={styles.inputCarnet}
             />
-            <View style={styles.PickContainer}>
-            <Text style={styles.label}>Choisir une couverture</Text>
-            <TouchableOpacity style={styles.btnPick}
-            onPress={this._pickImage}>
-              <Text > Choisir </Text>
-            </TouchableOpacity>
-            </View>
-            <View style={styles.couvertureContainer}>
-              { image &&
-              <Image source={{uri :image}} style={styles.couverturePicker} />}
-              <TouchableOpacity style={styles.btnPick}
-              onPress={()=>this._delete.bind(this)}>
-                <Text>Supprimer</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.label}>Description du contenu :</Text>
+            <Text style={styles.labelPost}>Description du contenu :</Text>
             <TextInput 
                     onChangeText={(text)=>this.setState({description: text})}
                     value={this.state.description}
+                    maxLength={25}
                     returnKeyType="go"
                     autoCapitalize="sentences"
                     style={styles.inputCarnet}
                     ref={(input) =>this.descriptionInput = input}
             />
             <View style={styles.PickContainer}>
-            <TouchableOpacity disabled={this.state.usableCreer}falsee={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
+            <TouchableOpacity style={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
               <Text>Créer mon carnet</Text>
-            </TouchableOpacity>
-            <TouchableOpacity disabled={this.state.usablePage}falsee={styles.btnPick} onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:this.state.chilkey})}>
-              <Text>Créer ma page</Text>
             </TouchableOpacity>
 
             </View>

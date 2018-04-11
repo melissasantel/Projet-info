@@ -67,15 +67,14 @@ export default class ProfilSetUp extends Component {
 
     updateUserData(pseudo,profil_picture,visible,description){
         var userId= this.state.user.uid;
-        var updateData ={
+        firebase.database().ref('users/'+ userId).update({
             pseudonyme: pseudo.toString(), 
             profil_picture: profil_picture.toString(),
             visible_account:visible.toString(),
             description: description.toString(),
-        };
-        var updates={};
-        updates['users/'+ userId] = updateData;
-        return firebase.database().ref().update(updates);
+        }).then(
+            this.props.navigation.navigate('ProfilScreen')
+        )
     }
 
     _handleImagePicked = async pickerResult => {

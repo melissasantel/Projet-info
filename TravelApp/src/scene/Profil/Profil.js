@@ -7,7 +7,6 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
 import Icons from 'react-native-vector-icons/Feather';
 
-//TODO afficher les photos et les carnets en ligne comme sur instagram 
 export default class Profil extends Component {
     constructor() {
         super();
@@ -21,8 +20,8 @@ export default class Profil extends Component {
             imageUri : '',
             description:'',
             userMail:'',
-            postDataSource:'',
-            dsref:ds,
+            postDataSource:ds, 
+            carnetDataSource:ds,
         };
         this.renderRow=this.renderRow.bind(this);
     }
@@ -31,12 +30,14 @@ export default class Profil extends Component {
       header: null
     };
     
-  getPostOrCarnet(){
-    if (this.state.val === 'post'){
-      this.setState({val:'carnet'})
-    }
-    else
+  getPost(){
     this.setState({val:'post'})
+  }
+  getCarnet(){
+    this.setState({val:'carnet'})
+    var carnetRef = firebase.database().ref('users/'+this.state.userId).child('user_carnet');
+    this.CarnetRef(carnetRef);
+
   }
 
     getRef(){
@@ -52,44 +53,34 @@ export default class Profil extends Component {
         if(user){
             userId = firebase.auth().currentUser.uid;
             userEmail = firebase.auth().currentUser.email
-            this.setState({userIdentifiant:userId, userMail:userEmail})
+            this.setState({userId:userId, userMail:userEmail})
             this.renderUserData(user);
             if (this.state.val==='post'){
             var postRef = firebase.database().ref('users/'+userId).child('user_post');
-            this.getPost(postRef);
-            }
-            /*if (this.state.val==='carnet'){
-              var carnetRef = firebase.database().ref('users/'+userId).child('user_carnet');
-              this.getPost(carnetRef);
-            }*/
-        } 
-   })  
-  }
-
-  componentWillMount(){
-    var userId='';
-    var userEmail='';
-    firebase.auth().onAuthStateChanged((user)=>{
-        this.setState({user})
-        if(user){
-            userId = firebase.auth().currentUser.uid;
-            userEmail = firebase.auth().currentUser.email
-            this.setState({userIdentifiant:userId, userMail:userEmail})
-            this.renderUserData(user);
-            if (this.state.val==='post'){
-            var postRef = firebase.database().ref('users/'+userId).child('user_post');
-            this.getPost(postRef);
-            }
-            if (this.state.val==='carnet'){
-              var carnetRef = firebase.database().ref('users/'+userId).child('user_carnet');
-              this.getPost(carnetRef);
+            this.PostRef(postRef);
             }
         } 
    })  
   }
+  
+  CarnetRef(Ref){
+    Ref.on('value',(snap) => {
+      let carnets =[];
+      snap.forEach((child) => {
+          carnets.push({
+              title: child.val().titre,
+              photo: child.val().image,
+              descrip: child.val().description,
+              _key: child.key
+          });
+      });
+      this.setState({
+          carnetDataSource: this.state.carnetDataSource.cloneWithRows(carnets)
+        });
+    }); 
+  }
 
-  getPost(Ref){
-    if (this.state.val==='post'){
+  PostRef(Ref){
     Ref.on('value', (snap)=>{
       let post=[];
       snap.forEach((child) => {
@@ -103,26 +94,9 @@ export default class Profil extends Component {
         }); 
       });
       this.setState({
-        postDataSource: this.state.dsref.cloneWithRows(post)
+        postDataSource: this.state.postDataSource.cloneWithRows(post)
       });
     });
-    }
-    else{
-      Ref.on('value',(snap) => {
-        let carnets =[];
-        snap.forEach((child) => {
-            carnets.push({
-                title: child.val().titre,
-                photo: child.val().image,
-                descrip: child.val().description,
-                _key: child.key
-            });
-        });
-        this.setState({
-            postDataSource: this.state.dsref.cloneWithRows(carnets)
-          });
-    }); 
-    }
   }
   
   pressRow(post){
@@ -139,7 +113,7 @@ export default class Profil extends Component {
             <Text style={styles.postText}>{data.date}</Text>
           
           <View style={styles.postPhotoContainer}>
-          {/*/<Image source={{uri :data.image}} style={styles.photoPost}></Image>*/}
+          <Image source={{uri :data.image}} style={styles.photoPost}></Image>
           </View>
           <Text style={styles.postText}>{data.descrip}</Text>
         </View>
@@ -176,39 +150,75 @@ export default class Profil extends Component {
   render() {  
   //si l'utilisateur est connecté il visualise sont profil.
   
-    if (this.state.user){
+    if (this.state.user && this.state.val === 'post'){
           const {navigate} = this.props.navigation;
           return (
+            <ScrollView>
               <ViewContainer>
                 <StatusbarBackground/>
                 <View style={styles.infoContainer}>
-                  <View style={styles.ButtonParametersCont}>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('ParametersScreen')}>
-                      <Text style={styles.buttonParam}>Paramètres</Text>
-                    </TouchableOpacity>
-                    <Image source={require('../../image/settings-gears.png')}/>
-                  </View>
-                  <View style={styles.profilPicture}>
-                    <View style={styles.profilPictureBorder}>
-                      <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
+                    <View style={styles.profilPicture}>
+                
+                      <View style={styles.profilPictureBorder}>
+                        <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.description}>
                     <Text style={styles.nameText}>{this.state.pseudo}</Text>
+                    <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} /> 
+                  <View style={styles.description}>
                     <Text style={styles.descriptionText}>{this.state.description}</Text>
                   </View>
                 </View>
                 <View style={styles.affichageContainer}>
-                  <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPostOrCarnet()}>
+                  <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPost()}>
                       <Text>Galerie</Text>
                     </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getPostOrCarnet()}>
+                  <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getCarnet()}>
                     <Text>Carnets</Text>
                   </TouchableOpacity>
                 </View>
                 <ListView dataSource={this.state.postDataSource}
               renderRow={this.renderRow}/>
               </ViewContainer>
+              </ScrollView>
+            
+          )
+        }
+        if (this.state.user && this.state.val === 'carnet'){
+          const {navigate} = this.props.navigation;
+          return (
+            <ScrollView>
+              <ViewContainer>
+                <StatusbarBackground/>
+                <View style={styles.infoContainer}>
+                  <View style={styles.pickContainer}>
+                    <View style={styles.profilPicture}>
+                      <View style={styles.profilPictureBorder}>
+                        <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.nameparaContainer}>
+                    <Text style={styles.nameText}>{this.state.pseudo}</Text>
+                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
+                  </View>
+                  <View style={styles.description}>
+                    
+                    <Text style={styles.descriptionText}>{this.state.description}</Text>
+                  </View>
+                </View>
+                <View style={styles.affichageContainer}>
+                  <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPost()}>
+                      <Text>Galerie</Text>
+                    </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getCarnet()}>
+                    <Text>Carnets</Text>
+                  </TouchableOpacity>
+                </View>
+                <ListView dataSource={this.state.carnetDataSource}
+              renderRow={this.renderRow}/>
+              </ViewContainer>
+              </ScrollView>
             
           )
         }

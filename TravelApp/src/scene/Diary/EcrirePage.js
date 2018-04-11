@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput,
+   KeyboardAvoidingView,TouchableOpacity, Keyboard } from 'react-native';
 import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -20,6 +21,8 @@ export default class EcrirePage extends React.Component {
           texte:'',
           weather:'',
           location:'',
+          userId:'',
+          childKey:'',
           image:null,
           date:today.getDate().toString()+'/'+parseInt(today.getMonth()+1).toString()+'/'+today.getFullYear(), 
         }
@@ -28,14 +31,22 @@ export default class EcrirePage extends React.Component {
       static navigationOption ={
         headerTitle:'Nouvelle page',
       };
+      componentWillMount(){
+        let useruid='';
+        useruid = firebase.auth().currentUser.uid;
+        this.setState({userId:useruid});
+              console.log('salut')
+              console.log(useruid);
+      }
+
       _pickImage= async() =>{
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
           aspect: [4,3],
         });
-    
+        
         console.log(result);
-    
+
         if(!result.cancelled){
           this._handleImagePicked(result.uri);
         }
@@ -47,31 +58,43 @@ export default class EcrirePage extends React.Component {
           .storage("gs://travelapp-29172.appspot.com")
           .ref('CarnetImages/')
           .child(this.state.image);
-    
         // Delete the file
-        Ref.delete().then(function() {
-          this.setState({image :null});
-        }).catch(function(error) {
+        Ref.delete()
+        .then(
+          this.setState({image :null})
+        )
+        .catch(function(error) {
           console.log(error.message)
       // Uh-oh, an error occurred!
       });
     }
 
-      _addPage(titre,texte,weather,location,image,date){
-        let pageCarnetPath= "Carnets/"+keyCarnet+"pages";
-        let pageRef= firebase.database().ref(pageCarnetPath);
-        pageRef.push({
-            titre: titre.toString(),
-            texte: texte.toString(),
-            weather : weather.toString(),
-            location : location.toString(),
-            date: date.toString(),
-            image: image.toString(),
-        }).then(
-            this.props.navigation.navigate('DetailsCarnets', {keyCarnet :keyCarnet})
-        )
+  _addPage(titre,texte,weather,location,image,date, keyCarnet){
+    if (titre === '' || texte === '' ){
+        this.setState({usableCreer:false,usablePage:true})
+        alert("Veuillez remplir tous les champs titre et texte")
+    }
+    else{
+      var pageData = {
+        titre: titre.toString(),
+        texte: texte.toString(),
+        weather : weather.toString(),
+        location : location.toString(),
+        date: date.toString(),
+        image: image.toString(),
+      };
+    
+      // Get a key for a new Post.
+      var newPageKey = firebase.database().ref('users/'+this.state.userId+'/user_carnet/'+keyCarnet).child('pages').push().key; 
+      this.setState({childKey:newPageKey})
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var updates={};
+      updates['/users/'+this.state.userId+'/user_carnet/'+keyCarnet+'/pages/'+newPageKey]=pageData; 
+      firebase.database().ref().update(updates);
+      this.props.navigation.navigate('DetailsCarnetScreen', {keyCarnet:keyCarnet})
+    }
 
-      }
+  }
 
     _handleImagePicked = async pickerResult => {
         try {
@@ -79,7 +102,6 @@ export default class EcrirePage extends React.Component {
           if (!pickerResult.cancelled){
             uploadUrl = await uploadImageAsync(pickerResult);
             this.setState({ image: uploadUrl});
-        
           }
         } catch (e) {
           console.log(e);
@@ -97,54 +119,81 @@ export default class EcrirePage extends React.Component {
         var titreCarnet = params ? params.titre : null;
         let {image} = this.state;
           return (
-            <ScrollView contentContainerStyle={styles.contentContainer}>
+            <ScrollView 
+            contentContainerStyle={styles.contentContainer}>
               <ViewContainer>
-                  <StatusbarBackground/>
+                  <KeyboardAvoidingView behavior="padding" style={styles.container}>
+                  <Text style={styles.labelPost}>Choisir une couverture</Text>
+                  <View style={styles.imagePageContainer}>
+                    { image &&
+                    <Image source={{uri :image}} style={styles.imagePage} />}
+                  </View>
+                  <View style={styles.pickContainer}>
+                    <TouchableOpacity style={styles.btnPickPage}
+                    onPress={this._pickImage}>
+                      <Text > Choisir </Text>
+                    </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnPickPage}
+                                      onPress={()=>this._delete.bind(this)}>
+                      <Text>Supprimer</Text>
+                  </TouchableOpacity>
+                  </View>
+                  <Text style={styles.labelPost}>Date : {this.state.date}</Text>
                   <View style={styles.PickContainer}>
-            <Text style={styles.label}>Choisir une couverture</Text>
-            <TouchableOpacity style={styles.btnPick}
-            onPress={this._pickImage}>
-              <Text > Choisir </Text>
-            </TouchableOpacity>
-            </View>
-            <View style={styles.couvertureContainer}>
-              { image &&
-              <Image source={{uri :image}} style={styles.couverturePicker} />}
-              <TouchableOpacity style={styles.btnPick}
-              onPress={()=>this._delete.bind(this)}>
-                <Text>Supprimer</Text>
-              </TouchableOpacity>
-            </View>
-                  <Text>Titre :  </Text>
-                  <TextInput
-                    onChangeText={(text)=>this.setState({titre: text})}
-                    value={this.state.titre}
-                    returnKeyType="next"
-                    autoCapitalize="sentences"
-                    autoCorrect={true}
-                    style={styles.input}
-                  />
-                  <Text>Date : {this.state.date}</Text>    
-                  <Text>Weather :  </Text>  
-                  <Icons name='sun' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'sun'})} />
-                  <Icons name='cloud' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'cloud'})} />
-                  <Icons name='cloud-rain' type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'rain'})} />
-                  <Icons name='cloud-snow' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'snow'})} />
-                  <Text>Location: </Text> 
-                  <TextInput
+                    <Text style={styles.labelPost}>Titre :</Text>
+                    <TextInput
+                      placeholder='Mon titre'
+                      onChangeText={(text)=>this.setState({titre: text})}
+                      value={this.state.titre}
+                      returnKeyType="next"
+                      autoCapitalize="sentences"
+                      autoCorrect={true}
+                      style={styles.inputPost}
+                    />
+                    </View>                  
+                  
+                  <View style={styles.PickContainer}>
+                    <Text style={styles.labelPost}>Weather :</Text>  
+                    <Icons name='sun' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'sun'})} />
+                    <Icons name='cloud' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'cloud'})} />
+                    <Icons name='cloud-rain' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'rain'})} />
+                    <Icons name='cloud-snow' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'snow'})} />
+                    <Text style={styles.weatherStyle}>{this.state.weather}</Text>
+                  </View>
+                  <View style={styles.PickContainer}>
+                    <Text style={styles.labelPost}>Location: </Text>
+                    <TextInput
+                        placeholder='Paris,France'
+                        onChangeText={(text)=>this.setState({location: text})}
+                        value={this.state.location}
+                        returnKeyType="next"
+                        autoCapitalize="sentences"
+                        autoCorrect={true}
+                        style={styles.inputPost}
+                      /> 
+                  </View>
+                  <Text style={styles.labelPost}>Texte: </Text>  
+                  <TextInput style={{
+                    height:100,
+                    margin:20, 
+                    padding:10,
+                    borderColor:'#fff',
+                    }}
                     placeholder="Ecrivez vos premières lignes"
                     editable = {true}
-                    //maxLength = {40}
                     multiline = {true}
-                    numberOfLines = {10}
+                    returnKeyType='done'
                     autoCapitalize="sentences"
                     autoCorrect={true}
                     onChangeText={(text) => this.setState({texte: text})}
                     value={this.state.texte}
-       />           
-                  <TouchableOpacity onPress={()=>this._addPage(this.state.titre,this.state.texte,this.state.weather,this.state.location,this.state.image, this.state.date)}>
-                      Enregistrer ma page
+                    onSubmitEditing={Keyboard.dismiss}
+                  />           
+                  <TouchableOpacity style={styles.btnPickPage}
+                  onPress={()=>this._addPage(this.state.titre,this.state.texte,this.state.weather,this.state.location,this.state.image, this.state.date, keyCarnet)}>
+                      <Text>Enregistrer ma page</Text>
                   </TouchableOpacity>
+                  </KeyboardAvoidingView>
               </ViewContainer>
             </ScrollView>
 

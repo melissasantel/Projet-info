@@ -23,6 +23,7 @@ export default class Loggin extends Component {
          
         this._login = this._login.bind(this)
         this._register = this._register.bind(this)
+        this._passwordReset=this._passwordReset.bind(this)
         
     }
     //Fonction permettant de se connecter à l'application en recherchant les informations dans firebase
@@ -33,7 +34,18 @@ export default class Loggin extends Component {
             //Gestion des erreurs
             console.log(error.code)
             console.log(error.message)
+            alert(error.message);
             
+        });
+    }
+    _passwordReset(){
+        var auth = firebase.auth();
+        var emailAddress = this.state.email;
+
+        auth.sendPasswordResetEmail(emailAddress).then(function() {
+        // Email sent.
+        }).catch(function(error) {
+        // An error happened.
         });
     }
     
@@ -90,6 +102,9 @@ export default class Loggin extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity style= {styles.buttonRegister} onPress={() =>this._register()}>
                         <Text style={styles.buttonTextRegister}>CRÉER UN COMPTE !</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style= {styles.buttonRegister} onPress={() =>this._passwordReset()}>
+                        <Text style={styles.buttonTextRegister}>Mot de passe oublié ?</Text>
                     </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView> 

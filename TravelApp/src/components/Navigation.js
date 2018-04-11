@@ -6,7 +6,7 @@ import Profil from '../scene/Profil/Profil';
 import Acceuil from '../scene/Home/Acceuil';
 import Photos from '../scene/Photos/Photos'; 
 import CreerCarnet from '../scene/Diary/CreerCarnet';
-import Abbonnement from '../scene/Abbonnement/Abbonnement';
+import UserProfil from '../scene/Profil/UserProfil';
 import Parameters from '../scene/Parameters/Parameters';
 import EcrirePage from '../scene/Diary/EcrirePage';
 import MesCarnets from '../scene/Diary/MesCarnets';
@@ -27,8 +27,11 @@ const RootStack = StackNavigator({
     HomeScreen : {
         screen : Acceuil
     },
-    FollowerScreen : {
-        screen : Abbonnement
+    UserProfilScreen : {
+        screen : UserProfil,
+    },
+    ProfilScreen :{
+      screen : Profil
     },
 },
     {

@@ -16,6 +16,7 @@ export default class Post extends React.Component {
           location:'',
           uploading:false,
           reussite:false, 
+          visible:'',
           user:firebase.auth().currentUser,
           
         }
@@ -31,6 +32,8 @@ export default class Post extends React.Component {
       this.setState({user:firebase.auth().currentUser});
       firebase.database().ref('users/' + this.state.user.uid+'/pseudonyme').on("value", snapshot => {
         this.setState({author: snapshot.val()})});
+        firebase.database().ref('users/' + this.state.user.uid+'/visible_account').on("value", snapshot => {
+          this.setState({visible: snapshot.val()})});
     }
 
     _addPost = (description,date,location,imageUri)=>{
@@ -40,7 +43,9 @@ export default class Post extends React.Component {
                 date: date.toString(),
                 location: location.toString(),
                 image: imageUri.toString(),
-                author : this.state.author
+                author : this.state.author,
+                visible : this.state.visible,
+                user : this.state.user.uid,
         };
         // Get a key for a new Post.
         var newPostKey = firebase.database().ref().child('post').push().key; 
@@ -48,11 +53,9 @@ export default class Post extends React.Component {
         var updates={};
         updates['/post/' + newPostKey]=postData;
         updates['/users/'+this.state.user.uid+'/user_post/'+newPostKey]=postData; 
-        return firebase.database().ref().update(updates);
+        firebase.database().ref().update(updates);
 
-        /*.then(
-          this.props.navigation.navigate('HomeScreen')
-        )  */           
+        this.props.navigation.navigate('HomeScreen')           
     }
 
     
@@ -60,33 +63,33 @@ export default class Post extends React.Component {
     render(){
         var { params } = this.props.navigation.state; 
         var imageUri = params ? params.imageUri : null; 
-        var {navigate} = this.props.navigation;
+        const {navigate} = this.props.navigation;
         return (
             <ViewContainer>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
-          <Image source={{uri :imageUri}} style={styles.couvCarnet} />
-          <TextInput 
-                    placeholder="Ajouter une légende"
-                    placeholderTextColor='#A9A9A9'
-                    onChangeText={(text)=>this.setState({description: text})}
-                    value={this.state.description}
-                    returnKeyType="next"
-                    onSubmitEditing={()=> this.locationInput.focus()}
-                    autoCorrect={false}
-                    style={styles.inputCarnet}
-            />
-            <View style={styles.PickContainer}>
-            <Text style={styles.label}>Ajouter une localisation</Text>
+          <View style={styles.imageLegendeCont}>
+            <Image source={{uri :imageUri}} style={styles.couvCarnet} />
+              <TextInput 
+                placeholder="Ajouter une légende"
+                onChangeText={(text)=>this.setState({description: text})}
+                value={this.state.description}
+                returnKeyType="next"
+                onSubmitEditing={()=> this.locationInput.focus()}
+                autoCorrect={true}
+                style={styles.inputPost}/>
+          </View>
+          <View style={{width:300, height:1, backgroundColor: 'black'}} />
+          <View style={styles.imageLegendeCont}>
+            <Text style={styles.labelPost}>Ajouter un lieu:</Text>
             <TextInput
-                onChangeText={(text)=>this.setState({location: text})}
-                value={this.state.location}
-                returnKeyType="go"
-                autoCorrect={false}
-                style={styles.inputCarnet}
-                ref={(input) =>this.locationInput = input}
-                >
-            </TextInput>
-            </View>
+              placeholder="Lieu .."
+              onChangeText={(text)=>this.setState({location: text})}
+              value={this.state.location}
+              returnKeyType="go"
+              autoCorrect={true}
+              style={styles.inputPost}
+              ref={(input) =>this.locationInput = input}/>
+          </View>
               <TouchableOpacity style={styles.btnPost}
                 onPress={() => {this._addPost(this.state.description,this.state.date,this.state.location,imageUri)}}>
                 <Text style={styles.btnTextPost}>PUBLIER</Text>

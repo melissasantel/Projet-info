@@ -5,6 +5,7 @@ import ViewContainer from '../../components/ViewContainer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
+import Icons from 'react-native-vector-icons/Feather';
 
 export default class Pages extends React.Component {
     constructor() {
@@ -19,6 +20,7 @@ export default class Pages extends React.Component {
             location : '',
             date: '',
             image: '',
+            nameWeather:'',
         };
         
     }
@@ -46,23 +48,43 @@ export default class Pages extends React.Component {
         this.setState({date: snapshot.val()})});
         firebase.database().ref('Carnets/' + key+'/image').on("value", snapshot => {
         this.setState({image: snapshot.val()})});
+        
+        if(weather === sun){
+            this.setState(nameWeather:'sun')
+        }
+        if(weather === cloud){
+            this.setState(nameWeather:'cloud')
+        }
+        if(weather === rain){
+            this.setState(nameWeather:'cloud-rain')
+        }
+        else {
+            this.setState(nameWeather:'cloud-snow')
+        }
       }
+     
 
     render(){
         // pour weather voir comment faire navigation
         return (
             <ViewContainer>
             <StatusbarBackground/>
-            <Text>Titre :  </Text>
-            <Text>{this.state.titre}</Text>
-            <Text>Date : {this.state.date}</Text>    
-            <Text>Weather : {this.state.weather} </Text>  
-            <Icons name='sun' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'sun'})} />
-            <Icons name='cloud' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'cloud'})} />
-            <Icons name='cloud-rain' type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'rain'})} />
-            <Icons name='cloud-snow' type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'snow'})} />
-            <Text>Location: </Text> 
-            <Text>{this.state.location}</Text>
+            <View style={styles.imagePageContainer}>
+                <Image source={{uri :this.state.image}} style={styles.imagePage} />}
+            </View>
+            <View style={styles.pickContainer}>
+                <Text style={styles.labelPost}>Titre :  </Text>
+                <Text style={styles.labelPost}>{this.state.titre}</Text>
+            </View>
+            <Text style={styles.labelPost}>Date : {this.state.date}</Text>
+            <View style={styles.pickContainer}> 
+                <Text style={styles.labelPost}>Weather : {this.state.weather} </Text>  
+                <Icons name={this.state.nameWeather} type='feather' size={22} color='#66CDAA'/>
+            </View>
+            <View style={styles.pickContainer}>
+                <Text style={styles.labelPost}>Location: </Text> 
+                <Text style={styles.labelPost}>{this.state.location}</Text>
+            </View>
             <Text>{this.state.texte}</Text>
             </ViewContainer>
         )

@@ -36,9 +36,10 @@ export default class Parameters extends Component {
         }
     }
     deleteAccount(){
+        let userId = firebase.auth().currentUser.uid;
         this.state.user.delete().then(function() {
             console.log('delete user')
-            let ref = firebase.database().ref().child('users/'+this.state.user.uid);
+            let ref = firebase.database().ref().child('users/'+userId);
             ref.remove();
             this.props.navigation.navigate('ProfilScreen')
           })

@@ -7,7 +7,6 @@ import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import Icons from 'react-native-vector-icons/Feather';
 
-
 export default class MesCarnets extends React.Component {
     constructor(props){
         super(props);
@@ -45,7 +44,6 @@ export default class MesCarnets extends React.Component {
             this.setState({user})
             if(user){
                 userId = firebase.auth().currentUser.uid;
-                console.log(user.Id)
                 this.setState({userIdentifiant:userId})
                 var carnetRef = firebase.database().ref('users/'+userId).child('user_carnet');
                 this.getCarnet(carnetRef);
@@ -94,16 +92,18 @@ export default class MesCarnets extends React.Component {
     renderRow(carnet){
         return(
         <View style={styles.listCarnetContainer}>
-            <View style={styles.carnetCouvContainer}>
+            <View style={styles.imageLegendeCont}>
                 <Image source={{uri :carnet.photo}} style={styles.couvCarnet}></Image>
-            </View>
-            <View style={styles.infoCarnetContainer}>
-                <TouchableOpacity onPress={() => {this.pressRow(carnet);}}>
-                    <Text style={styles.postTitle}>{carnet.title}</Text>
-                </TouchableOpacity>
-                <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
-                <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(carnet._key) } />
-                <Icons name='file-plus' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:carnet._key})} />
+                <View style={styles.infoCarnetContainer}>
+                    <TouchableOpacity onPress={() => {this.pressRow(carnet);}}>
+                        <Text style={styles.postTitle}>{carnet.title}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
+                    <View style={styles.PickContainer}>
+                        <Icons name='file-plus'style={styles.iconCarnet} type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:carnet._key})} />
+                        <Icons name='trash-2' style={styles.iconCarnet} type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(carnet._key) } /> 
+                    </View>
+                </View>
             </View>
       </View>
         )
