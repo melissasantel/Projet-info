@@ -10,14 +10,14 @@ import Icons from 'react-native-vector-icons/Feather';
 export default class DetailsCarnet extends React.Component {
     constructor(props){
         super(props);
-        var { params } = this.props.navigation.state; 
-        var keyCarnet = params ? params.keyCarnet : null;
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
         this.state = { 
+            user:'',
             userId : '',
+            CarnetId:'',
             dataSource: ds,
         }
-        this.Ref= this.getRef('users/'+ userId +'/user_carnet/'+keyCarnet).child('pages');
+        //this.Ref= this.getRef('users/'+ this.state.userId +'/user_carnet/'+keyCarnet).child('pages');
         this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
@@ -27,24 +27,41 @@ export default class DetailsCarnet extends React.Component {
         headerTitle: 'Détails du carnet',
     };
 
-    getRef(){
+    /*getRef(){
         return firebase.database().ref();
-    }
+    }*/
 
     componentWillMount(){
-        let useruid= ''
-        useruid : firebase.auth().currentUser,
-        this.setState({userId:useruid});
-        this.getPageCarnet(this.Ref);
+        var { params } = this.props.navigation.state; 
+        var keyCarnet = params ? params.keyCarnet : null;
+        let useruid='';
+        useruid = firebase.auth().currentUser.uid;
+            console.log(useruid)
+            this.setState({userId:useruid,CarnetId:keyCarnet});
+            var pageRef = firebase.database().ref('users/'+useruid+'/user_carnet/'+ keyCarnet).child('pages');
+            this.getPageCarnet(pageRef);
+               
+      
     }
 
-    componentDidMount() {
-        
-        this.getPageCarnet(this.Ref)
-    }
+  /* componentDidMount() {
+        var { params } = this.props.navigation.state; 
+        var keyCarnet = params ? params.keyCarnet : null;
+        let useruid= '';
+        firebase.auth().onAuthStateChanged((user)=>{
+            this.setState({user})
+            if (user){
+                useruid : firebase.auth().currentUser.uid;
+                console.log(useruid)
+                this.setState({userId:useruid});
+                var pageRef = firebase.database().ref('users/'+useruid+'/user_carnet/'+ keyCarnet).child('pages');
+            this.getPageCarnet(pageRef);
+            }   
+        }) 
+    }*/
 
     deleteFile(keyPage){
-        let ref = firebase.database().ref().child('Carnets/'+keyCarnet);
+        let ref = firebase.database().ref('users/'+this.state.userId+'/user_carnet/'+ this.state.CarnetId).child('pages/'+keyPage);
         Alert.alert(
             // This is Alert Dialog Title
             'Suppression du carnet',
@@ -76,8 +93,8 @@ export default class DetailsCarnet extends React.Component {
         
     }
     pressRow(page){
-        console.log(page);
-        this.props.navigation.navigate('PageScreen',{keyPage: page._key, titre:page.titre})
+        const {navigate} = this.props.navigation;
+        this.props.navigation.navigate('PageScreen',{keyCarnet: this.state.CarnetId,keyPage: page._key})
       }
     renderRow(page){
         return(

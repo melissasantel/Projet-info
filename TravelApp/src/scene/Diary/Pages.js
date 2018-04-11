@@ -9,10 +9,7 @@ import Icons from 'react-native-vector-icons/Feather';
 
 export default class Pages extends React.Component {
     constructor() {
-        super();
-        var { params } = this.props.navigation.state; 
-        var keyCarnet = params ? params.keyCarnet : null;
-        var titrePage = params ? params.titre :null;
+        super();     
         this.state = {
             titre: '',
             texte: '',
@@ -24,42 +21,49 @@ export default class Pages extends React.Component {
         };
         
     }
-    static navigationOptions ={
-      header: null 
-
+    static navigationOptions = {
+            headerTitle:null,
+        
     };
 
-    componentDidMount() {
+    componentWillMount() {
         var { params } = this.props.navigation.state; 
         var keyPage = params ? params.keyPage : null;
-        this.renderUserData(keyPage)
+        var keyCarnet = params ? params.keyCarnet :null;
+        let userId=''; 
+        userId=firebase.auth().currentUser.uid;
+        console.log(userId)
+        console.log(keyCarnet)
+        console.log(keyPage)
+        this.renderUserData(keyCarnet,keyPage, userId)
     }
     
-    renderUserData(key){ 
-        firebase.database().ref('Carnets/' + key+'/titre').on("value", snapshot => {
+    renderUserData(keyCarnet,keyPage, id){ 
+        let weather='';
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/titre').on("value", snapshot => {
           this.setState({titre: snapshot.val()})});
-        firebase.database().ref('Carnets/' + key+'/texte').on("value", snapshot => {
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/texte').on("value", snapshot => {
           this.setState({texte: snapshot.val()})});
-        firebase.database().ref('Carnets/' + key+'/weather').on("value", snapshot => {
-          this.setState({weather: snapshot.val()})});
-        firebase.database().ref('Carnets/' + key+'/location').on("value", snapshot => {
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/weather').on("value", snapshot => {
+          weather = snapshot.val()});
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/location').on("value", snapshot => {
         this.setState({location: snapshot.val()})});
-        firebase.database().ref('Carnets/' + key+'/date').on("value", snapshot => {
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/date').on("value", snapshot => {
         this.setState({date: snapshot.val()})});
-        firebase.database().ref('Carnets/' + key+'/image').on("value", snapshot => {
+        firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/image').on("value", snapshot => {
         this.setState({image: snapshot.val()})});
         
-        if(weather === sun){
-            this.setState(nameWeather:'sun')
+        if(weather==='sun'){
+            this.setState({nameWeather:'sun'})
         }
-        if(weather === cloud){
-            this.setState(nameWeather:'cloud')
+        if(weather === 'cloud'){
+            this.setState({nameWeather:'cloud'})
         }
-        if(weather === rain){
-            this.setState(nameWeather:'cloud-rain')
+        if(weather === 'rain'){
+            this.setState({nameWeather:'cloud-rain'})
         }
-        else {
-            this.setState(nameWeather:'cloud-snow')
+        if(weather === 'snow') {
+            this.setState({nameWeather:'cloud-snow'})
         }
       }
      
@@ -67,26 +71,23 @@ export default class Pages extends React.Component {
     render(){
         // pour weather voir comment faire navigation
         return (
+            <ScrollView>
             <ViewContainer>
-            <StatusbarBackground/>
-            <View style={styles.imagePageContainer}>
-                <Image source={{uri :this.state.image}} style={styles.imagePage} />}
+            <View style={styles.postContainer}>
+                <View style={styles.imagePageContainer}>
+                    <Image source={{uri :this.state.image}} style={styles.imagePage} />}
+                </View>
+                <Text style={styles.labelPost}>Titre : {this.state.titre}  </Text> 
+                <Text style={styles.labelPost}>Date : {this.state.date}</Text>
+                <View style={styles.pickContainer}> 
+                    <Text style={styles.labelPost}>Weather : </Text>  
+                    <Icons name={this.state.nameWeather} type='feather' size={22} color='#66CDAA'/>
+                </View>
+                    <Text style={styles.labelPost}>Location: {this.state.location} </Text> 
+                <Text>{this.state.texte}</Text>
             </View>
-            <View style={styles.pickContainer}>
-                <Text style={styles.labelPost}>Titre :  </Text>
-                <Text style={styles.labelPost}>{this.state.titre}</Text>
-            </View>
-            <Text style={styles.labelPost}>Date : {this.state.date}</Text>
-            <View style={styles.pickContainer}> 
-                <Text style={styles.labelPost}>Weather : {this.state.weather} </Text>  
-                <Icons name={this.state.nameWeather} type='feather' size={22} color='#66CDAA'/>
-            </View>
-            <View style={styles.pickContainer}>
-                <Text style={styles.labelPost}>Location: </Text> 
-                <Text style={styles.labelPost}>{this.state.location}</Text>
-            </View>
-            <Text>{this.state.texte}</Text>
             </ViewContainer>
+            </ScrollView>
         )
     }
 }

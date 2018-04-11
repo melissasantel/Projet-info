@@ -10,12 +10,11 @@ export default class UserProfil extends Component {
     constructor() {
         super(); 
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
-        let { params } = this.props.navigation.state; 
-        let userId = params ? params.userId : null;
         this.state = {
             parametre: false,
             val : 'post',
-            userId:userId,
+            idCurrentuser:'',
+            userId:'',
             pseudo : '',
             imageUri : '',
             description:'',
@@ -40,9 +39,15 @@ export default class UserProfil extends Component {
   }
 
    componentWillMount() {
+    let { params } = this.props.navigation.state; 
+    let userId = params ? params.userId : null;
+
+    let idCurrentuser = ''
+    idCurrentuser = firebase.auth().currentUser.uid;
+    this.setState({userId:userId, idCurrentuser:idCurrentuser});
     this.renderUserData(userId);
     if (this.state.val==='post'){
-      var postRef = firebase.database().ref('users/'+this.state.userId).child('user_post');
+      var postRef = firebase.database().ref('users/'+userId).child('user_post');
       this.PostRef(postRef);
     }  
   }
@@ -133,8 +138,7 @@ export default class UserProfil extends Component {
 
   render() {
     const {navigate} = this.props.navigation;
-    const id = firebase.auth().currentUser.uid
-    if (this.state.userId !== id )
+    if (this.state.userId !== this.state.idCurrentuser )
     {
       if (this.state.val === 'post'){
         return (
@@ -203,7 +207,10 @@ export default class UserProfil extends Component {
       }
     }
     else {
-      this.props.navigation.navigate('ProfilScreen')
+      return (
+        this.props.navigation.navigate('ProfilScreen')
+      )
+     
     }
          
   }

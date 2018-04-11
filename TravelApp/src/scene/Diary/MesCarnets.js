@@ -52,8 +52,7 @@ export default class MesCarnets extends React.Component {
         
     }
     deleteFile(keyCarnet){
-        let ref = firebase.database().ref().child('Carnets/'+keyCarnet);
-        let ref2=firebase.database().ref().child('users/'+this.state.userIdentifiant+ '/user_carnet/'+keyCarnet);
+        let ref = firebase.database().ref('users/'+this.state.userIdentifiant).child('/user_carnet/'+keyCarnet);
         Alert.alert(
             // This is Alert Dialog Title
             'Suppression du carnet',
@@ -63,7 +62,7 @@ export default class MesCarnets extends React.Component {
               //First Cancel Button in Alert Dialog.
               {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
               //Second OK Button in Alert Dialog
-              {text: 'OK', onPress: () => {ref.remove(), ref2.remove()}},  
+              {text: 'OK', onPress: () => {ref.remove()}},  
             ]
           )
        
@@ -86,7 +85,6 @@ export default class MesCarnets extends React.Component {
         
     }
     pressRow(carnet){
-        console.log(carnet);
         this.props.navigation.navigate('DetailsCarnetScreen',{keyCarnet: carnet._key})
       }
     renderRow(carnet){

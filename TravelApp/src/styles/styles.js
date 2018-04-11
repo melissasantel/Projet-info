@@ -353,6 +353,11 @@ export const styles = StyleSheet.create ({
     },
 
     //Profil utilisateur
+    
+    trashContainer:{
+        alignItems:'flex-end',
+        marginBottom:10,
+    },
     infoContainer:{
         backgroundColor:'#fff',
         borderBottomColor:'#A9A9A9',
@@ -426,13 +431,17 @@ export const styles = StyleSheet.create ({
         alignItems: 'center',
 
     },
+    paramContainerIcon:{
+        paddingLeft:10,
+    },
     nameparaContainer:{
         flexDirection:'row',
         jutifyContent:'center', 
         alignItems:'center',
+        paddingBottom:10,
     },
     nameText: {
-        alignItems:'center',
+        //alignItems:'center',
         fontSize : 20,
         color : '#66CDAA'
     },

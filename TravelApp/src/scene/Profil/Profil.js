@@ -106,31 +106,36 @@ export default class Profil extends Component {
     if (this.state.val==='post'){
       return(
         <View style={styles.postContainer}>
-          <TouchableOpacity onPress={() => {this.pressRow(data);}}>
-            <Text style={styles.postTitle}>{data.author}</Text>
-          </TouchableOpacity>
-            <Text style={styles.postText}>{data.location}</Text>
-            <Text style={styles.postText}>{data.date}</Text>
-          
-          <View style={styles.postPhotoContainer}>
-          <Image source={{uri :data.image}} style={styles.photoPost}></Image>
-          </View>
-          <Text style={styles.postText}>{data.descrip}</Text>
+        <View style={styles.trashContainer}>
+          <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(data._key) } />
         </View>
+        <View style={styles.titreDateContainer}>
+            <Text style={styles.postTitle}>{data.author}</Text>
+          <Text>{data.date}</Text>
+        </View>
+        <Text>{data.location}</Text>
+        <View style={styles.postPhotoContainer}>
+          <Image source={{uri :data.image}} style={styles.photoPost}></Image>
+        </View>
+        <Text style={styles.postText}>{data.descrip}</Text>
+      </View>
       ) 
     }
     else{
       return(
-        <View style={styles.listCarnetContainer}>
-            <View style={styles.carnetCouvContainer}>
-                <Image source={{uri :data.photo}} style={styles.couvCarnet}></Image>
-            </View>
-            <View style={styles.infoCarnetContainer}>
-                <TouchableOpacity onPress={() => {this.pressRowCarnet(data);}}>
+        <View style={styles.postContainer}>
+        <View style={styles.trashContainer}>
+          <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(data._key) } />
+        </View>
+        <TouchableOpacity onPress={() => {this.pressRowCarnet(data);}}>
                     <Text style={styles.postTitle}>{data.title}</Text>
                 </TouchableOpacity>
+            <View style={styles.postPhotoContainer}>
+                <Image source={{uri :data.photo}} style={styles.photoPost}></Image>
+            </View>
+            <View style={styles.infoCarnetContainer}>
+                
                 <Text style={styles.CarnetDescrText}>{data.descrip}</Text>
-                <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(data._key) } />
             </View>
       </View>
         )
@@ -149,43 +154,8 @@ export default class Profil extends Component {
 
   render() {  
   //si l'utilisateur est connecté il visualise sont profil.
-  
+  const {navigate} = this.props.navigation;
     if (this.state.user && this.state.val === 'post'){
-          const {navigate} = this.props.navigation;
-          return (
-            <ScrollView>
-              <ViewContainer>
-                <StatusbarBackground/>
-                <View style={styles.infoContainer}>
-                    <View style={styles.profilPicture}>
-                
-                      <View style={styles.profilPictureBorder}>
-                        <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
-                      </View>
-                    </View>
-                    <Text style={styles.nameText}>{this.state.pseudo}</Text>
-                    <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} /> 
-                  <View style={styles.description}>
-                    <Text style={styles.descriptionText}>{this.state.description}</Text>
-                  </View>
-                </View>
-                <View style={styles.affichageContainer}>
-                  <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPost()}>
-                      <Text>Galerie</Text>
-                    </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getCarnet()}>
-                    <Text>Carnets</Text>
-                  </TouchableOpacity>
-                </View>
-                <ListView dataSource={this.state.postDataSource}
-              renderRow={this.renderRow}/>
-              </ViewContainer>
-              </ScrollView>
-            
-          )
-        }
-        if (this.state.user && this.state.val === 'carnet'){
-          const {navigate} = this.props.navigation;
           return (
             <ScrollView>
               <ViewContainer>
@@ -209,10 +179,48 @@ export default class Profil extends Component {
                 </View>
                 <View style={styles.affichageContainer}>
                   <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPost()}>
-                      <Text>Galerie</Text>
+                      <Text>Ma galerie</Text>
                     </TouchableOpacity>
                   <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getCarnet()}>
-                    <Text>Carnets</Text>
+                    <Text>Mes carnets</Text>
+                  </TouchableOpacity>
+                </View>
+                <ListView dataSource={this.state.postDataSource}
+              renderRow={this.renderRow}/>
+              </ViewContainer>
+              </ScrollView>  
+          )
+        }
+        if (this.state.user && this.state.val === 'carnet'){
+          return (
+            <ScrollView>
+              <ViewContainer>
+                <StatusbarBackground/>
+                <View style={styles.infoContainer}>
+                  <View style={styles.pickContainer}>
+                    <View style={styles.profilPicture}>
+                      <View style={styles.profilPictureBorder}>
+                        <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.nameparaContainer}>
+                    <Text style={styles.nameText}>{this.state.pseudo}</Text>
+                    <View style={styles.paramContainerIcon}>
+                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
+                  </View>
+                  </View>
+                  <View style={styles.description}>
+                    
+                    <Text style={styles.descriptionText}>{this.state.description}</Text>
+                  </View>
+                </View>
+                <View style={styles.affichageContainer}>
+                  <TouchableOpacity style={styles.btnGalerieProfil} onPress={()=>this.getPost()}>
+                      <Text>Ma galerie</Text>
+                    </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnCarnetProfil} onPress={()=>this.getCarnet()}>
+                    <Text>Mes carnets</Text>
                   </TouchableOpacity>
                 </View>
                 <ListView dataSource={this.state.carnetDataSource}
