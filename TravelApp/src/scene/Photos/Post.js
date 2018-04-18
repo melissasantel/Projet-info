@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity,KeyboardAvoidingView, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity,KeyboardAvoidingView, TextInput, Alert} from 'react-native';
 import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
@@ -21,11 +21,12 @@ export default class Post extends React.Component {
           
         }
         this._addPost=this._addPost.bind(this);
+        //this._publish=this._publish.bind(this);
 
     }
     
     static navigationOption ={
-        headerTitle:'Nouvelle publication',
+        headerTitle:'Nouveau post',
       };
 
     componentDidMount() {
@@ -37,7 +38,8 @@ export default class Post extends React.Component {
     }
 
     _addPost = (description,date,location,imageUri)=>{
-      // A post entry.
+      if (description  !== '' || imageUri !== ''){
+        // A post entry.
         var postData = {
           description : description.toString(),
                 date: date.toString(),
@@ -54,11 +56,14 @@ export default class Post extends React.Component {
         updates['/post/' + newPostKey]=postData;
         updates['/users/'+this.state.user.uid+'/user_post/'+newPostKey]=postData; 
         firebase.database().ref().update(updates);
-
-        this.props.navigation.navigate('HomeScreen')           
+        this.props.navigation.navigate('HomeScreen');
+      }
+      else {
+        alert("Veuillez remplir l'ensemble des champs.")
+      }               
     }
 
-    
+   
 
     render(){
         var { params } = this.props.navigation.state; 
@@ -78,7 +83,6 @@ export default class Post extends React.Component {
                 autoCorrect={true}
                 style={styles.inputPost}/>
           </View>
-          <View style={{width:300, height:1, backgroundColor: 'black'}} />
           <View style={styles.imageLegendeCont}>
             <Text style={styles.labelPost}>Ajouter un lieu:</Text>
             <TextInput

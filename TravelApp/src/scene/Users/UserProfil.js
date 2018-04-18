@@ -23,10 +23,9 @@ export default class UserProfil extends Component {
             carnetDataSource:ds,
         };
         this.renderRow=this.renderRow.bind(this);
+        this.pressRow=this.pressRow.bind(this);
     }
-    static navigationOptions ={
-      header: null
-    };
+ 
     
   getPost(){
     this.setState({val:'post'})
@@ -41,7 +40,6 @@ export default class UserProfil extends Component {
    componentWillMount() {
     let { params } = this.props.navigation.state; 
     let userId = params ? params.userId : null;
-
     let idCurrentuser = ''
     idCurrentuser = firebase.auth().currentUser.uid;
     this.setState({userId:userId, idCurrentuser:idCurrentuser});
@@ -88,8 +86,14 @@ export default class UserProfil extends Component {
     });
   }
   
-  pressRow(post){
-    console.log(post);
+  pressRow(data){
+    const {navigate} = this.props.navigation;
+    if (this.state.val === 'post'){
+      console.log(data);
+    }
+    else {
+      this.props.navigation.navigate('UserCarnetScreen',{keyCarnet: data._key, userId : this.state.userId})
+    }
   }
   renderRow(data){
     if (this.state.val==='post'){
@@ -115,11 +119,10 @@ export default class UserProfil extends Component {
                 <Image source={{uri :data.photo}} style={styles.couvCarnet}></Image>
             </View>
             <View style={styles.infoCarnetContainer}>
-                <TouchableOpacity onPress={() => {this.pressRowCarnet(data);}}>
+                <TouchableOpacity onPress={() => {this.pressRow(data);}}>
                     <Text style={styles.postTitle}>{data.title}</Text>
                 </TouchableOpacity>
                 <Text style={styles.CarnetDescrText}>{data.descrip}</Text>
-                <Icons name='trash-2' type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(data._key) } />
             </View>
       </View>
         )
@@ -127,12 +130,12 @@ export default class UserProfil extends Component {
   }
   
 
-  renderUserData(user){ 
-    firebase.database().ref('users/' + this.state.userId +'/pseudonyme').on("value", snapshot => {
+  renderUserData(userId){ 
+    firebase.database().ref('users/' + userId +'/pseudonyme').on("value", snapshot => {
       this.setState({pseudo: snapshot.val()})});
-    firebase.database().ref('users/' +this.state.userId +'/profil_picture').on("value", snapshot => {
+    firebase.database().ref('users/' + userId +'/profil_picture').on("value", snapshot => {
       this.setState({imageUri: snapshot.val()})});
-    firebase.database().ref('users/' + this.state.userId +'/description').on("value", snapshot => {
+    firebase.database().ref('users/' + userId +'/description').on("value", snapshot => {
       this.setState({description: snapshot.val()})});
   }
 
@@ -144,7 +147,6 @@ export default class UserProfil extends Component {
         return (
           <ScrollView>
             <ViewContainer>
-              <StatusbarBackground/>
               <View style={styles.infoContainer}>
                 <View style={styles.profilPicture}>
                   <View style={styles.profilPictureBorder}>
@@ -175,7 +177,6 @@ export default class UserProfil extends Component {
         return (
           <ScrollView>
             <ViewContainer>
-              <StatusbarBackground/>
               <View style={styles.infoContainer}>
                 <View style={styles.ButtonParametersCont}>
                   <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />

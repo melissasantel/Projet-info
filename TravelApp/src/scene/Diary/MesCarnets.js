@@ -98,8 +98,8 @@ export default class MesCarnets extends React.Component {
                     </TouchableOpacity>
                     <Text style={styles.CarnetDescrText}>{carnet.descrip}</Text>
                     <View style={styles.PickContainer}>
-                        <Icons name='file-plus'style={styles.iconCarnet} type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:carnet._key})} />
-                        <Icons name='trash-2' style={styles.iconCarnet} type='feather' size={22} color='#A9A9A9' onPress={() => this.deleteFile(carnet._key) } /> 
+                        <Icons name='file-plus'style={styles.iconCarnet} type='feather' size={24} color='skyblue' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:carnet._key})} />
+                        <Icons name='trash-2' style={styles.iconCarnet} type='feather' size={24} color='skyblue' onPress={() => this.deleteFile(carnet._key) } /> 
                     </View>
                 </View>
             </View>
@@ -114,8 +114,8 @@ export default class MesCarnets extends React.Component {
             return (
                 <ViewContainer>
                     <View style={styles.btnCreerContainer}>
-                        <Text style={styles.btnCreer}>Créer un carnet </Text>
-                        <Icons name='plus-circle' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')} />
+                        <Text style={styles.btnTextPost}>NOUVEAU CARNET   </Text>
+                        <Icons name='plus-circle' type='feather' size={24} color='skyblue' onPress={()=>this.props.navigation.navigate('CreerCarnetScreen')} />
                    </View>
                     <ListView dataSource={this.state.carnetDataSource}
                     renderRow={this.renderRow} />

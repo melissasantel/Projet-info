@@ -19,6 +19,7 @@ export default class Acceuil extends React.Component {
 
   static navigationOptions ={
     headerTitle : 'Travel App',
+    headerLeft:null,
 
   };
 

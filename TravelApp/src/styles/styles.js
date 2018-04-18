@@ -40,6 +40,10 @@ export const styles = StyleSheet.create ({
         color:'#696969',
     },
     //page de carnet de voyage
+    btnValContainer:{
+        flexDirection:'row',
+        justifyContent: 'flex-end'
+    },
     imagePage:{
         width:300,
         height:200,
@@ -63,6 +67,8 @@ export const styles = StyleSheet.create ({
     }, 
     PickContainer:{
         flexDirection:'row',
+        //alignItems : 'center',
+        //justifyContent:'space-between',
     },
     btnPick:{
         alignItems:'flex-end',
@@ -133,6 +139,9 @@ export const styles = StyleSheet.create ({
         paddingTop:14, 
         paddingBottom:16
     },
+    btnCarnet:{
+        paddingTop : 10,
+    },
     
     couvCarnet:{
         width:100,
@@ -154,11 +163,17 @@ export const styles = StyleSheet.create ({
         justifyContent:'flex-end',
         fontSize:11,
     },
+    btnTextCarnet:{
+        color: '#66CDAA',
+        textAlign: 'center',
+        fontWeight: '700',
+        fontSize : 14,
+    },
     //page post 
     
     inputPost:{
         borderBottomWidth: 1,
-        borderColor : 'black',
+        borderColor : '#A9A9A9',
         height: 20,
         width:250,  
         marginBottom:10,
@@ -380,7 +395,7 @@ export const styles = StyleSheet.create ({
     couverturePicker:{
         height: 100, 
         width: 100, 
-        borderRadius: 55, 
+        borderRadius: 45, 
         overflow: 'hidden'
     },
     profilPictureBorder: {

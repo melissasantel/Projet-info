@@ -54,15 +54,17 @@ export default class CreerCarnet extends React.Component {
   };
 
   _delete(){
+    var uri = this.state.image
+    this.setState({image :null})
     // Create a reference to the file to delete
     var Ref = firebase.app()
       .storage("gs://travelapp-29172.appspot.com")
-      .ref('CarnetImages/')
-      .child(this.state.image);
+      .ref()
+      .child('CarnetImages/' +uri);
     // Delete the file
     Ref.delete()
     .then(
-      this.setState({image :null})
+      
     )
     .catch(function(error) {
       console.log(error.message)
@@ -118,25 +120,23 @@ export default class CreerCarnet extends React.Component {
     const {navigate} = this.props.navigation;
     let {image} = this.state;
       return (
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView>
         <ViewContainer>
           <KeyboardAvoidingView behavior="padding" style={styles.container}>
-            <Text style={styles.labelPost}>Choisir une couverture</Text>
+            <Text style={styles.labelPost}>Choisissez une couverture pour votre carnet*</Text>
             <View style={styles.couvertureContainer}>
               { image &&
               <Image source={{uri :image}} style={styles.couverturePicker} />}
             </View>
             <View style={styles.pickContainer}>
-            <TouchableOpacity style={styles.btnPick}
-            onPress={this._pickImage}>
-              <Text > Choisir </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnPick}
-              onPress={()=>this._delete.bind(this)}>
-                <Text>Supprimer</Text>
+              <TouchableOpacity style={styles.btnCarnet} onPress={this._pickImage}>
+                <Text style={styles.btnTextCarnet}> CHOISIR </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.btnCarnet} onPress={()=>this._delete.bind(this)}>
+                <Text style={styles.btnTextCarnet}>SUPPRIMER</Text>
               </TouchableOpacity>
           </View>
-          <Text style={styles.labelPost}>Titre du carnet :</Text>
+          <Text style={styles.labelPost}>Titre du carnet *:</Text>
           <TextInput 
                     onChangeText={(text)=>this.setState({title: text})}
                     value={this.state.title}
@@ -147,7 +147,7 @@ export default class CreerCarnet extends React.Component {
                     autoCorrect={false}
                     style={styles.inputCarnet}
             />
-            <Text style={styles.labelPost}>Description du contenu :</Text>
+            <Text style={styles.labelPost}>Description du contenu *:</Text>
             <TextInput 
                     onChangeText={(text)=>this.setState({description: text})}
                     value={this.state.description}
@@ -157,11 +157,10 @@ export default class CreerCarnet extends React.Component {
                     style={styles.inputCarnet}
                     ref={(input) =>this.descriptionInput = input}
             />
-            <View style={styles.PickContainer}>
-            <TouchableOpacity style={styles.btnPick} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
-              <Text>Créer mon carnet</Text>
+            <View style={styles.btnValContainer}>
+            <TouchableOpacity style={styles.btnPost} onPress={()=>this._addCarnet(this.state.title,this.state.description,this.state.date, this.state.image,this.carnetRef)}>
+              <Text style={styles.btnTextCarnet}>SUIVANT</Text>
             </TouchableOpacity>
-
             </View>
           </KeyboardAvoidingView> 
         </ViewContainer>

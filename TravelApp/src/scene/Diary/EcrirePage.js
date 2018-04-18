@@ -29,7 +29,7 @@ export default class EcrirePage extends React.Component {
         this._addPage=this._addPage.bind(this)
       } 
       static navigationOption ={
-        headerTitle:'Nouvelle page',
+        headerTitle :'Nouvelle page',
       };
       componentWillMount(){
         let useruid='';
@@ -53,15 +53,17 @@ export default class EcrirePage extends React.Component {
       };
 
       _delete(){
+        var uri = this.state.image;
+        this.setState({image :null})
         // Create a reference to the file to delete
         var Ref = firebase.app()
           .storage("gs://travelapp-29172.appspot.com")
-          .ref('CarnetImages/')
-          .child(this.state.image);
+          .ref()
+          .child('CarnetImages/'+uri);
         // Delete the file
         Ref.delete()
         .then(
-          this.setState({image :null})
+          //The file is delete
         )
         .catch(function(error) {
           console.log(error.message)
@@ -91,6 +93,7 @@ export default class EcrirePage extends React.Component {
       var updates={};
       updates['/users/'+this.state.userId+'/user_carnet/'+keyCarnet+'/pages/'+newPageKey]=pageData; 
       firebase.database().ref().update(updates);
+      this.setState({titre:'', texte:'', weather:'', location:'', image : null})
       this.props.navigation.navigate('DetailsCarnetScreen', {keyCarnet:keyCarnet})
     }
 
@@ -123,7 +126,7 @@ export default class EcrirePage extends React.Component {
             contentContainerStyle={styles.contentContainer}>
               <ViewContainer>
                   <KeyboardAvoidingView behavior="padding" style={styles.container}>
-                  <Text style={styles.labelPost}>Choisir une couverture</Text>
+                  <Text style={styles.labelPost}>Ajouter une photo à votre page</Text>
                   <View style={styles.imagePageContainer}>
                     { image &&
                     <Image source={{uri :image}} style={styles.imagePage} />}
@@ -140,7 +143,7 @@ export default class EcrirePage extends React.Component {
                   </View>
                   <Text style={styles.labelPost}>Date : {this.state.date}</Text>
                   <View style={styles.PickContainer}>
-                    <Text style={styles.labelPost}>Titre :</Text>
+                    <Text style={styles.labelPost}>Titre* :</Text>
                     <TextInput
                       placeholder='Mon titre'
                       onChangeText={(text)=>this.setState({titre: text})}
@@ -153,11 +156,11 @@ export default class EcrirePage extends React.Component {
                     </View>                  
                   
                   <View style={styles.PickContainer}>
-                    <Text style={styles.labelPost}>Weather :</Text>  
-                    <Icons name='sun' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'sun'})} />
-                    <Icons name='cloud' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'cloud'})} />
-                    <Icons name='cloud-rain' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'rain'})} />
-                    <Icons name='cloud-snow' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'snow'})} />
+                    <Text style={styles.labelPost}>Météo :</Text>  
+                    <Icons name='sun' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'Ensoleillé'})} />
+                    <Icons name='cloud' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'Nuageux'})} />
+                    <Icons name='cloud-rain' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() =>this.setState({weather : 'Pluivieux'})} />
+                    <Icons name='cloud-snow' style={styles.iconPage} type='feather' size={22} color='#66CDAA' onPress={() => this.setState({weather : 'Neige'})} />
                     <Text style={styles.weatherStyle}>{this.state.weather}</Text>
                   </View>
                   <View style={styles.PickContainer}>
@@ -172,7 +175,7 @@ export default class EcrirePage extends React.Component {
                         style={styles.inputPost}
                       /> 
                   </View>
-                  <Text style={styles.labelPost}>Texte: </Text>  
+                  <Text style={styles.labelPost}>Texte* : </Text>  
                   <TextInput style={{
                     height:100,
                     margin:20, 
@@ -189,9 +192,9 @@ export default class EcrirePage extends React.Component {
                     value={this.state.texte}
                     onSubmitEditing={Keyboard.dismiss}
                   />           
-                  <TouchableOpacity style={styles.btnPickPage}
+                  <TouchableOpacity style={styles.btnTextPost}
                   onPress={()=>this._addPage(this.state.titre,this.state.texte,this.state.weather,this.state.location,this.state.image, this.state.date, keyCarnet)}>
-                      <Text>Enregistrer ma page</Text>
+                      <Text>CREER MA PAGE</Text>
                   </TouchableOpacity>
                   </KeyboardAvoidingView>
               </ViewContainer>

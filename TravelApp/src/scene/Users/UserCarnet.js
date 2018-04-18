@@ -5,9 +5,8 @@ import ViewContainer from '../../components/ViewContainer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
-import Icons from 'react-native-vector-icons/Feather';
 
-export default class DetailsCarnet extends React.Component {
+export default class UserCarnet extends React.Component {
     constructor(props){
         super(props);
         let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
@@ -18,7 +17,6 @@ export default class DetailsCarnet extends React.Component {
             dataSource: ds,
         }
         //this.Ref= this.getRef('users/'+ this.state.userId +'/user_carnet/'+keyCarnet).child('pages');
-        this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
     }
@@ -27,39 +25,17 @@ export default class DetailsCarnet extends React.Component {
         headerTitle: 'Mes pages de carnet',
     };
 
-    /*getRef(){
-        return firebase.database().ref();
-    }*/
-
     componentWillMount(){
         var { params } = this.props.navigation.state; 
         var keyCarnet = params ? params.keyCarnet : null;    
-        let useruid='';
-        useruid = firebase.auth().currentUser.uid;
-            console.log(useruid)
-            this.setState({userId:useruid,CarnetId:keyCarnet});
-            var pageRef = firebase.database().ref('users/'+useruid+'/user_carnet/'+ keyCarnet).child('pages');
-            this.getPageCarnet(pageRef);
+        let useruid = params ? params.userId : null;
+        this.setState({userId:useruid,CarnetId:keyCarnet});
+        var pageRef = firebase.database().ref('users/'+useruid+'/user_carnet/'+ keyCarnet).child('pages');
+        this.getPageCarnet(pageRef);
                
       
     }
 
-
-    deleteFile(keyPage){
-        let ref = firebase.database().ref('users/'+this.state.userId+'/user_carnet/'+ this.state.CarnetId).child('pages/'+keyPage);
-        Alert.alert(
-            // This is Alert Dialog Title
-            'Suppression du carnet',
-            // This is Alert Dialog Message. 
-            'Êtes-vous sûr de vouloir supprimer ce carnet ?',
-            [
-              //First Cancel Button in Alert Dialog.
-              {text: 'Annuler', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel'},
-              //Second OK Button in Alert Dialog
-              {text: 'OK', onPress: () => ref.remove()},  
-            ]
-          )
-    }
 
     getPageCarnet(Ref){
         Ref.on('value',(snap) => {
@@ -79,7 +55,7 @@ export default class DetailsCarnet extends React.Component {
     }
     pressRow(page){
         const {navigate} = this.props.navigation;
-        this.props.navigation.navigate('PageScreen',{keyCarnet: this.state.CarnetId,keyPage: page._key})
+        this.props.navigation.navigate('UserPageScreen',{keyCarnet: this.state.CarnetId,keyPage: page._key, userId : this.state.userId})
       }
     renderRow(page){
         return(
@@ -89,7 +65,6 @@ export default class DetailsCarnet extends React.Component {
                     <Text style={styles.postTitle}>{page.titre}</Text>
                 </TouchableOpacity>
                 <Text style={styles.CarnetDescrText}>{page.date}</Text>
-                <Icons name='trash-2' type='feather' size={24} color='skyblue' onPress={() => this.deleteFile(page._key) }/>
             </View>
       </View>
         )
@@ -99,9 +74,6 @@ export default class DetailsCarnet extends React.Component {
         const {navigate} = this.props.navigation;
         return (
             <ViewContainer>
-                <View style={styles.btnCreerContainer}>
-                    <Icons name='file-plus'style={styles.iconCarnet} type='feather' size={24} color='skyblue' onPress={()=>this.props.navigation.navigate('EcrirePageScreen', {keyCarnet:this.state.CarnetId})} />
-                </View>
                 <ListView dataSource={this.state.dataSource}
                 renderRow={this.renderRow} />
             </ViewContainer>

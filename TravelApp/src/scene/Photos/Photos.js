@@ -58,11 +58,13 @@ export default class Photo extends React.Component {
 
  };
  _removePictures(){
+   var uri = this.state.image; 
+   this.setState({image : null})
     // Create a reference to the file to delete
     var Ref = firebase.app()
       .storage("gs://travelapp-29172.appspot.com")
       .ref()
-      .child(this.state.image);
+      .child('PostImage/'+ uri);
 
     // Delete the file
     Ref.delete().then(function() {
