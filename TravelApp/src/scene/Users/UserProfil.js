@@ -77,6 +77,7 @@ export default class UserProfil extends Component {
           image: child.val().image,
           descrip: child.val().description,
           date : child.val().date,
+          _iduser : child.val().user,
           _key: child.key
         }); 
       });
@@ -89,7 +90,7 @@ export default class UserProfil extends Component {
   pressRow(data){
     const {navigate} = this.props.navigation;
     if (this.state.val === 'post'){
-      console.log(data);
+      this.props.navigation.navigate('UserProfil', {userId:data._iduser})
     }
     else {
       this.props.navigation.navigate('UserCarnetScreen',{keyCarnet: data._key, userId : this.state.userId})
@@ -99,14 +100,15 @@ export default class UserProfil extends Component {
     if (this.state.val==='post'){
       return(
         <View style={styles.postContainer}>
-          <TouchableOpacity onPress={() => {this.pressRow(data);}}>
-            <Text style={styles.postTitle}>{data.author}</Text>
-          </TouchableOpacity>
-            <Text style={styles.postText}>{data.location}</Text>
+          <View style={styles.titreDateContainer}>
+            <TouchableOpacity onPress={() => {this.pressRow(data);}}>
+              <Text style={styles.postTitle}>{data.author}</Text>
+            </TouchableOpacity>
             <Text style={styles.postText}>{data.date}</Text>
-          
+          </View>
+          <Text style={styles.postText}>{data.location}</Text>
           <View style={styles.postPhotoContainer}>
-          <Image source={{uri :data.image}} style={styles.photoPost}></Image>
+            <Image source={{uri :data.image}} style={styles.photoPost}></Image>
           </View>
           <Text style={styles.postText}>{data.descrip}</Text>
         </View>

@@ -197,6 +197,9 @@ export default class Profil extends Component {
                 <StatusbarBackground/>
                 <View style={styles.infoContainer}>
                   <View style={styles.pickContainer}>
+                    <View style={styles.paramContainer}>
+                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
+                    </View>
                     <View style={styles.profilPicture}>
                       <View style={styles.profilPictureBorder}>
                         <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
@@ -205,10 +208,8 @@ export default class Profil extends Component {
                   </View>
                   <View style={styles.nameparaContainer}>
                     <Text style={styles.nameText}>{this.state.pseudo}</Text>
-                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
                   </View>
                   <View style={styles.description}>
-                    
                     <Text style={styles.descriptionText}>{this.state.description}</Text>
                   </View>
                 </View>
@@ -233,6 +234,9 @@ export default class Profil extends Component {
                 <StatusbarBackground/>
                 <View style={styles.infoContainer}>
                   <View style={styles.pickContainer}>
+                    <View style={styles.paramContainer}>
+                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
+                    </View>
                     <View style={styles.profilPicture}>
                       <View style={styles.profilPictureBorder}>
                         <Image source ={{uri:this.state.imageUri}} style={styles.couverturePicker}/>
@@ -241,9 +245,6 @@ export default class Profil extends Component {
                   </View>
                   <View style={styles.nameparaContainer}>
                     <Text style={styles.nameText}>{this.state.pseudo}</Text>
-                    <View style={styles.paramContainerIcon}>
-                      <Icons  name='settings' type='feather' size={22} color='#A9A9A9' onPress={()=>this.props.navigation.navigate('ParametersScreen')} />
-                  </View>
                   </View>
                   <View style={styles.description}>
                     

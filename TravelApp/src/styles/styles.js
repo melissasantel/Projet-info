@@ -368,6 +368,10 @@ export const styles = StyleSheet.create ({
     },
 
     //Profil utilisateur
+    paramContainer:{
+        jutifyContent:'row',
+        alignItems:'flex-end',
+    },
     
     trashContainer:{
         alignItems:'flex-end',
@@ -446,17 +450,11 @@ export const styles = StyleSheet.create ({
         alignItems: 'center',
 
     },
-    paramContainerIcon:{
-        paddingLeft:10,
-    },
     nameparaContainer:{
-        flexDirection:'row',
-        jutifyContent:'center', 
         alignItems:'center',
         paddingBottom:10,
     },
     nameText: {
-        //alignItems:'center',
         fontSize : 20,
         color : '#66CDAA'
     },
