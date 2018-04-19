@@ -9,7 +9,7 @@ import { styles } from '../../styles/styles';
 import Icons from 'react-native-vector-icons/Feather';
 import {ImagePicker} from 'expo'; 
 import uuid from 'uuid';
-
+//Page de création d'une page de carnet
 
 export default class EcrirePage extends React.Component {
     constructor(props){
@@ -38,7 +38,7 @@ export default class EcrirePage extends React.Component {
               console.log('salut')
               console.log(useruid);
       }
-
+      //Fonction permettant de sélectionner une image dans la librairie
       _pickImage= async() =>{
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -51,7 +51,7 @@ export default class EcrirePage extends React.Component {
           this._handleImagePicked(result.uri);
         }
       };
-
+// Permet de supprimer l'image choisit 
       _delete(){
         var uri = this.state.image;
         this.setState({image :null})
@@ -70,7 +70,7 @@ export default class EcrirePage extends React.Component {
       // Uh-oh, an error occurred!
       });
     }
-
+//Ajout d'une nouvelle page dans la bdd
   _addPage(titre,texte,weather,location,image,date, keyCarnet){
     if (titre === '' || texte === '' ){
         this.setState({usableCreer:false,usablePage:true})
@@ -98,7 +98,7 @@ export default class EcrirePage extends React.Component {
     }
 
   }
-
+//Récupération de l'url de l'image ajouter au storage de firebase
     _handleImagePicked = async pickerResult => {
         try {
           this.setState({ uploading: true });
@@ -114,7 +114,7 @@ export default class EcrirePage extends React.Component {
         }
       };
     
-
+//Affichage du formulaire
     render() {
         const {navigate} = this.props.navigation;
         var { params } = this.props.navigation.state; 
@@ -203,6 +203,7 @@ export default class EcrirePage extends React.Component {
           )
     }
 }
+//Enregistrement d'une image dans le storage de firebase
 async function uploadImageAsync(uri) {
   const response = await fetch(uri);
   const blob = await response.blob();

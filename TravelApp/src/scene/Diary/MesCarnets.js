@@ -7,6 +7,7 @@ import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import Icons from 'react-native-vector-icons/Feather';
 
+//Affichage des carnets de l'utilisateur
 export default class MesCarnets extends React.Component {
     constructor(props){
         super(props);
@@ -25,7 +26,7 @@ export default class MesCarnets extends React.Component {
         headerTitle: 'Carnets de voyage',
     };
 
-
+// Récupération des données avant le chargement de la page
     componentWillMount(){ 
         var userId='';
         firebase.auth().onAuthStateChanged((user)=>{
@@ -51,6 +52,7 @@ export default class MesCarnets extends React.Component {
         })
         
     }
+    //permet de supprimer un carnet de la bdd
     deleteFile(keyCarnet){
         let ref = firebase.database().ref('users/'+this.state.userIdentifiant).child('/user_carnet/'+keyCarnet);
         Alert.alert(
@@ -67,6 +69,7 @@ export default class MesCarnets extends React.Component {
           )
        
     }
+    // récupération de tout les carnets de l'utilisateur et rangement dans une liste
     getCarnet(carnetsRef){
         carnetsRef.on('value',(snap) => {
             let carnets =[];
@@ -84,9 +87,11 @@ export default class MesCarnets extends React.Component {
         });
         
     }
+    //permet d'accéder aux détails d'un carnet, cad l'ensemble de ses pages
     pressRow(carnet){
         this.props.navigation.navigate('DetailsCarnetScreen',{keyCarnet: carnet._key})
       }
+      //affichage de la liste de carnet
     renderRow(carnet){
         return(
         <View style={styles.listCarnetContainer}>
@@ -106,7 +111,7 @@ export default class MesCarnets extends React.Component {
       </View>
         )
     }
-   
+   //affichage de la page
     render() {
         if (this.state.user){
 

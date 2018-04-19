@@ -25,7 +25,7 @@ export default class UserPage extends React.Component {
             headerTitle:null,
         
     };
-
+// Réccupération de donnée avant chargement page 
     componentWillMount() {
         var { params } = this.props.navigation.state; 
         var keyPage = params ? params.keyPage : null;
@@ -33,7 +33,7 @@ export default class UserPage extends React.Component {
         var userId= params ? params.userId : null; 
         this.renderUserData(keyCarnet,keyPage, userId)
     }
-    
+    // réccupération des données de lutilisateur 
     renderUserData(keyCarnet,keyPage,id){ 
         let weather='';
         firebase.database().ref('users/'+id+'/user_carnet/'+ keyCarnet+'/pages/'+keyPage+'/titre').on("value", snapshot => {
@@ -63,9 +63,8 @@ export default class UserPage extends React.Component {
         }
       }
      
-
+//affichage de la page
     render(){
-        // pour weather voir comment faire navigation
         return (
             <ScrollView>
             <ViewContainer>

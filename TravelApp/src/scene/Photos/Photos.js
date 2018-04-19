@@ -7,7 +7,7 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
 import uuid from 'uuid';
 
-
+//Page permettant de prendre des photos
 export default class Photo extends React.Component {
   constructor(props){
     super(props)
@@ -29,7 +29,7 @@ export default class Photo extends React.Component {
         this.setState({user});
     }) 
   }
-
+// Choisir une image dans la librairie
   _pickImage= async() =>{
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -42,7 +42,7 @@ export default class Photo extends React.Component {
       this._handleImagePicked(result.uri);
     }
   };
-
+// Prendre une photo avec la caméra
  _takeImage = async() =>{
    let result1 = await ImagePicker.launchCameraAsync({
      allowsEditing: true,
@@ -57,6 +57,7 @@ export default class Photo extends React.Component {
    }
 
  };
+ // supprimer la photo choisit
  _removePictures(){
    var uri = this.state.image; 
    this.setState({image : null})
@@ -75,7 +76,7 @@ export default class Photo extends React.Component {
 });
   
 };
-
+//réccupérer l'url de l'image enregistré dans le storage
 _handleImagePicked = async pickerResult => {
   try {
     this.setState({ uploading: true });
@@ -91,11 +92,12 @@ _handleImagePicked = async pickerResult => {
     this.setState({ uploading: false });
   }
 };
-
+// affichage
   render() {
     const {navigate} = this.props.navigation;
 
     let {image} = this.state;
+    // si l'utilisateur n'est pas connecté
     if (this.state.user=== null){
       return(
         <ViewContainer>
@@ -112,7 +114,9 @@ _handleImagePicked = async pickerResult => {
 
       )
     }
+    //si l'utilisateur est connecté
     if (this.state.user){
+      //si il n'y a pas d'image sélectionné
     if (image ===null) {
       return (
         <ViewContainer>
@@ -134,6 +138,7 @@ _handleImagePicked = async pickerResult => {
       );
     }
     else {
+      //si il y a une image 
       return (
         <ViewContainer>
           <StatusbarBackground/>

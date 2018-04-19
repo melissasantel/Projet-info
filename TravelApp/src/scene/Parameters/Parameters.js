@@ -7,6 +7,7 @@ import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import ViewContainer from '../../components/ViewContainer';
 
+// page de paramètre
 export default class Parameters extends Component {
     constructor(props){
         super(props)
@@ -26,7 +27,7 @@ export default class Parameters extends Component {
             this.setState({user});
         })
     }
- 
+ // Fonction de déconnexion
     signOutUser = async () => {
         try {
             await firebase.auth().signOut();
@@ -35,6 +36,7 @@ export default class Parameters extends Component {
             console.log(e);
         }
     }
+    //Fonction permettant de supprimer un compte
     deleteAccount(){
         let userId = firebase.auth().currentUser.uid;
         this.state.user.delete().then(function() {
@@ -64,7 +66,7 @@ export default class Parameters extends Component {
             ]
           )
     }
-
+// Affichage de la page 
     render() {
         const {navigate} = this.props.navigation;
         return (

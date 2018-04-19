@@ -38,6 +38,8 @@ export default class Loggin extends Component {
             
         });
     }
+    //Fonction permettant de réinitialiser le mot de passe. Il prend en compte l'email 
+    //rentrée dans le champ email du formulaire
     _passwordReset(){
         var auth = firebase.auth();
         var emailAddress = this.state.email;
@@ -48,10 +50,11 @@ export default class Loggin extends Component {
         // An error happened.
         });
     }
-    
+    // Condition permettant d'accéder à la page d'inscription
     _register (){
         this.setState({registry : true})
     }
+    //Affichage du formulaire 
     render() {
         if (this.state.registry)
         {

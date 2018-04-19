@@ -8,7 +8,7 @@ import SwitchButton from '../../components/SwitchButton';
 import { ScrollView } from 'react-native-gesture-handler';
 import {ImagePicker} from 'expo'; 
 import uuid from 'uuid';
-
+// Page de modification du profil de l'utilisateur 
 export default class ProfilSetUp extends Component {
     constructor(props) {
         super(props)
@@ -34,7 +34,7 @@ export default class ProfilSetUp extends Component {
                 this.renderUserData(this.state.user)
             }      
     }
-
+    //réccupération des données dans la bdd
     renderUserData(user){ 
         firebase.database().ref('users/' + user.uid+'/pseudonyme').on("value", snapshot => {
           this.setState({pseudo: snapshot.val()})});
@@ -47,11 +47,12 @@ export default class ProfilSetUp extends Component {
             email : user.email, 
         })
       }
-
+    // mise en place d'un bouton switch 
     toggleSwitch1 = (value) => {
         this.setState({switch1Value: value})
         console.log('Switch 1 is: ' + value)
     }
+    //sélectionner des photos dans la librairie
     _pickImage= async() =>{
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -64,7 +65,7 @@ export default class ProfilSetUp extends Component {
           this._handleImagePicked(result.uri);
         }
       };
-
+      // Fonction permettant de modifier les données de l'utilsateur dans la bdd
     updateUserData(pseudo,profil_picture,visible,description){
         var userId= this.state.user.uid;
         firebase.database().ref('users/'+ userId).update({
@@ -76,7 +77,7 @@ export default class ProfilSetUp extends Component {
             this.props.navigation.navigate('ProfilScreen')
         )
     }
-
+    // réccupération de l'url de l'image sauvergarder dans le storage de firebase
     _handleImagePicked = async pickerResult => {
         try {
           this.setState({ uploading: true });
@@ -92,7 +93,7 @@ export default class ProfilSetUp extends Component {
           this.setState({ uploading: false });
         }
       };
-    
+    //Affichage de la page 
 render() {
     const {navigate} = this.props.navigation;
     let {profil_picture} = this.state;

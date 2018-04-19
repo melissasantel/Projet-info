@@ -26,6 +26,7 @@ export default class UpdateEmail extends Component {
             this.setState({email: this.state.user.email})
         }
     }
+    //Fonction permettant de modifier l'email de l'utilisateur
     updateUserEmail(email){
         //Update user's email
             user.updateEmail(email).then(function() {
@@ -36,7 +37,7 @@ export default class UpdateEmail extends Component {
                 console.log(error.message)
             });
     }
-
+//Affichage formulaire
     render(){
         return (
             <ViewContainer>

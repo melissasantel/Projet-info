@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, ListView, TouchableOpacity,Image} from 'react-n
 import ViewContainer from '../../components/ViewContainer';
 import {firebaseRef} from '../../services/Firebase';
 import { styles } from '../../styles/styles';
-
-export default class Acceuil extends React.Component {
+//Accueil 
+export default class Accueil extends React.Component {
   constructor(){
     super(); 
     let ds= new ListView.DataSource({rowHasChanged:(r1,r2) => r1 !== r2});
@@ -34,7 +34,7 @@ export default class Acceuil extends React.Component {
   componentDidMount(){
     this.getPost(this.postRef);
   }
-
+// obtenir l'ensemble des posts de la bdd
   getPost(postRef){
     postRef.on('value', (snap)=>{
       let post=[];
@@ -54,7 +54,7 @@ export default class Acceuil extends React.Component {
       });
     });
   }
-  
+  // affichage de la liste de post 
   renderRow(post){
     const {navigate} = this.props.navigation;
     return(

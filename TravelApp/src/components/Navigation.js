@@ -3,7 +3,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StyleSheet} from 'react-native';
 import { TabNavigator, TabBarBottom,StackNavigator } from 'react-navigation';
 import Profil from '../scene/Profil/Profil';
-import Acceuil from '../scene/Home/Acceuil';
+import Accueil from '../scene/Home/Accueil';
 import Photos from '../scene/Photos/Photos'; 
 import CreerCarnet from '../scene/Diary/CreerCarnet';
 import UserProfil from '../scene/Users/UserProfil';
@@ -24,10 +24,10 @@ export default class Navigation extends Component{
         return <BarreNavigation/>; 
     }
 }
-
+//Navigation à partir de l'onglet Accueil
 const RootStack = StackNavigator({
     HomeScreen : {
-        screen : Acceuil
+        screen : Accueil
     },
     UserProfilScreen : {
         screen : UserProfil,
@@ -46,7 +46,7 @@ const RootStack = StackNavigator({
         inialRouteName: 'HomeScreen',
     },
   );
-
+//Navigation à partir de l'onglet Profil
 const RootStack1 = StackNavigator({
     ProfilScreen :{
       screen : Profil 
@@ -65,7 +65,7 @@ const RootStack1 = StackNavigator({
     initialRouteName: 'ProfilScreen',
   },
 );
-
+//Navigation a partir de l'onglet Carnet
 const RootStack2 = StackNavigator({
     MesCarnetScreen:{
       screen: MesCarnets
@@ -87,7 +87,7 @@ const RootStack2 = StackNavigator({
     initialRouteName: 'MesCarnetScreen',
   },
 );
-
+// Navigation a partir de l'onglet Carnet
 const RootStack3 = StackNavigator({
     PhotosScreen: {
       screen : Photos
@@ -96,7 +96,7 @@ const RootStack3 = StackNavigator({
       screen : Post
     },
     HomeScreen : {
-      screen : Acceuil
+      screen : Accueil
   },
 },
   {
@@ -106,7 +106,7 @@ const RootStack3 = StackNavigator({
 
 
 const BarreNavigation =  TabNavigator({
-  Acceuil: {
+  Accueil: {
     screen : RootStack,
   },
   Photos: {
@@ -120,12 +120,12 @@ const BarreNavigation =  TabNavigator({
   },
 },
 {
-
+//Mise en place de la barre de navigation
   navigationOptions: ({navigation}) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
-      if (routeName === 'Acceuil') {
+      if (routeName === 'Accueil') {
         iconName =`ios-home${focused ? '' : '-outline'}`;
       } else if (routeName === 'Photos') {
         iconName = `ios-images${focused ? '' : '-outline'}`;

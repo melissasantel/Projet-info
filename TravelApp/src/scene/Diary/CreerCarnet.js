@@ -6,8 +6,9 @@ import StatusbarBackground from '../../components/StatusbarBackground';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import {ImagePicker} from 'expo'; 
-import uuid from 'uuid';
+import uuid from 'uuid'; 
 
+//Page permettant de créer un carnet 
 export default class CreerCarnet extends React.Component {
   constructor(props){
     var today = new Date();
@@ -30,16 +31,17 @@ export default class CreerCarnet extends React.Component {
   static navigationOption ={
     headerTitle:'Nouveau carnet',
   };
+  //Réccupération des valeurs avant le chargement de la page
   componentDidMount() {
     this.setState({user:firebase.auth().currentUser});
     firebase.database().ref('users/' + this.state.user.uid+'/pseudonyme').on("value", snapshot => {
       this.setState({author: snapshot.val()})});
   }
-
+// obtenir la référence de la base de donnée
   getRef(){
     return firebase.database().ref();
   }
-
+// Fonction permettant de prendre une photo dans la librairie d'image
   _pickImage= async() =>{
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -52,7 +54,7 @@ export default class CreerCarnet extends React.Component {
       this._handleImagePicked(result.uri);
     }
   };
-
+// Fonction permettant de supprimmer l'image prise
   _delete(){
     var uri = this.state.image
     this.setState({image :null})
@@ -71,7 +73,7 @@ export default class CreerCarnet extends React.Component {
   // Uh-oh, an error occurred!
   });
 }
-
+// Fonction permettant d'ajouter les informations du nouveau carnet dans la bdd
   _addCarnet = (title,description,date,image,carnetRef) =>{
     this.setState({usableCreer:true,usablePage:false})
     if (description === '' || image === null || title === '' ){
@@ -100,6 +102,7 @@ export default class CreerCarnet extends React.Component {
     }
   }
 
+  //Fonction permettant d'obtenir l'url de la photo enregistré dans le storage de firebase
   _handleImagePicked = async pickerResult => {
     try {
       this.setState({ uploading: true });
@@ -116,6 +119,7 @@ export default class CreerCarnet extends React.Component {
     }
   };
 
+  //Affichage du formulaire
   render() {
     const {navigate} = this.props.navigation;
     let {image} = this.state;
@@ -168,6 +172,7 @@ export default class CreerCarnet extends React.Component {
       );
   }
 }
+// Fonction permettant d'enregistrer l'image dans le storage de firebase
 async function uploadImageAsync(uri) {
   const response = await fetch(uri);
   const blob = await response.blob();

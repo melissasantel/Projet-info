@@ -7,6 +7,7 @@ import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import Icons from 'react-native-vector-icons/Feather';
 
+//Affichage des pages du carnet sélectionné
 export default class DetailsCarnet extends React.Component {
     constructor(props){
         super(props);
@@ -17,20 +18,16 @@ export default class DetailsCarnet extends React.Component {
             CarnetId:'',
             dataSource: ds,
         }
-        //this.Ref= this.getRef('users/'+ this.state.userId +'/user_carnet/'+keyCarnet).child('pages');
         this.deleteFile=this.deleteFile.bind(this);
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
     }
 
     static navigationOptions ={
-        headerTitle: 'Mes pages de carnet',
+        headerTitle: 'Mes pages',
     };
 
-    /*getRef(){
-        return firebase.database().ref();
-    }*/
-
+    // réccupère les données avant le chargement de la page
     componentWillMount(){
         var { params } = this.props.navigation.state; 
         var keyCarnet = params ? params.keyCarnet : null;    
@@ -39,12 +36,11 @@ export default class DetailsCarnet extends React.Component {
             console.log(useruid)
             this.setState({userId:useruid,CarnetId:keyCarnet});
             var pageRef = firebase.database().ref('users/'+useruid+'/user_carnet/'+ keyCarnet).child('pages');
-            this.getPageCarnet(pageRef);
-               
+            this.getPageCarnet(pageRef);            
       
     }
 
-
+    //supression d'une page du carnet 
     deleteFile(keyPage){
         let ref = firebase.database().ref('users/'+this.state.userId+'/user_carnet/'+ this.state.CarnetId).child('pages/'+keyPage);
         Alert.alert(
@@ -60,7 +56,7 @@ export default class DetailsCarnet extends React.Component {
             ]
           )
     }
-
+    //obtenir les carnets de la bdd pour les ranger dans une liste
     getPageCarnet(Ref){
         Ref.on('value',(snap) => {
             let pages =[];
@@ -77,10 +73,12 @@ export default class DetailsCarnet extends React.Component {
         });
         
     }
+    //permet d'accéder à une page du carnet
     pressRow(page){
         const {navigate} = this.props.navigation;
         this.props.navigation.navigate('PageScreen',{keyCarnet: this.state.CarnetId,keyPage: page._key})
       }
+      //affichage de la liste des carnets
     renderRow(page){
         return(
         <View style={styles.listCarnetContainer}>
@@ -94,7 +92,7 @@ export default class DetailsCarnet extends React.Component {
       </View>
         )
     }
-   
+   //affichage de la page 
     render() {
         const {navigate} = this.props.navigation;
         return (

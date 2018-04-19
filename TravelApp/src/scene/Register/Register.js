@@ -65,19 +65,17 @@ export default class Signin extends Component {
                     user_carnet:[],
                 });
                 
-            } /*else {
-               console.log('encore un échec')
-            }*/
+            } 
           });
 
     
 }
 
-
+// contion de retour à la page de connexion
     _goBback() {
         this.setState({back:true})
     }
-    
+    //Affichage du formulaire
     render() {
         if ( this.state.back === false){
         return (

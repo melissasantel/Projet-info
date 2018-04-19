@@ -6,7 +6,7 @@ import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
 import Icons from 'react-native-vector-icons/Feather';
-
+//Page de profil de l'utilisateur
 export default class Profil extends Component {
     constructor() {
         super();
@@ -24,6 +24,7 @@ export default class Profil extends Component {
             carnetDataSource:ds,
         };
         this.renderRow=this.renderRow.bind(this);
+        this.pressRow=this.pressRow.bind(this);
     }
 
     static navigationOptions ={
@@ -33,17 +34,18 @@ export default class Profil extends Component {
   getPost(){
     this.setState({val:'post'})
   }
+  //obtiention des référence des carnets dans la bdd 
   getCarnet(){
     this.setState({val:'carnet'})
     var carnetRef = firebase.database().ref('users/'+this.state.userId).child('user_carnet').orderByChild('user_carnet/date');
     this.CarnetRef(carnetRef);
 
   }
-
+// référence de la base de donnée
     getRef(){
       return firebase.database().ref();
     }
-
+// chargement de donnée avant le chargement de la page
    componentDidMount() {
     var userId='';
     var userEmail='';
@@ -62,7 +64,7 @@ export default class Profil extends Component {
         } 
    })  
   }
-  
+ // obtention réf des carnets et rangement des données dans un tableau
   CarnetRef(Ref){
     Ref.on('value',(snap) => {
       let carnets =[];
@@ -79,7 +81,7 @@ export default class Profil extends Component {
         });
     }); 
   }
-
+// obtention réf des posts et rangement des données dans un tableau
   PostRef(Ref){
     Ref.on('value', (snap)=>{
       let post=[];
@@ -98,10 +100,12 @@ export default class Profil extends Component {
       });
     });
   }
-  
-  pressRow(post){
-    console.log(post);
+  // bouton permettant d'accéder au carnet 
+  pressRow(data){
+    console.log(data);
+    this.props.navigation.navigate('DetailsCarnetScreen',{keyCarnet: data._key})
   }
+  //affichage des tableaux
   renderRow(data){
     if (this.state.val==='post'){
       return(
@@ -127,7 +131,7 @@ export default class Profil extends Component {
         <View style={styles.trashContainer}>
           <Icons name='trash-2' type='feather' size={24} color='skyblue' onPress={() => this.deleteFile(data._key) } />
         </View>
-        <TouchableOpacity onPress={() => {this.pressRowCarnet(data);}}>
+        <TouchableOpacity onPress={() => {this.pressRow(data);}}>
                     <Text style={styles.postTitle}>{data.title}</Text>
                 </TouchableOpacity>
             <View style={styles.postPhotoContainer}>
@@ -141,7 +145,7 @@ export default class Profil extends Component {
         )
     }
   }
-
+// supprimer un carnet ou un post
   deleteFile(key){
     if (this.state.val==='carnet'){
       let ref = firebase.database().ref('users/'+this.state.userId).child('/user_carnet/'+key);
@@ -186,10 +190,11 @@ export default class Profil extends Component {
     firebase.database().ref('users/' + user.uid+'/description').on("value", snapshot => {
       this.setState({description: snapshot.val()})});
   }
-
+// affichage de la page
   render() {  
   //si l'utilisateur est connecté il visualise sont profil.
   const {navigate} = this.props.navigation;
+  //Il visualise ses posts
     if (this.state.user && this.state.val === 'post'){
           return (
             <ScrollView>
@@ -227,6 +232,7 @@ export default class Profil extends Component {
               </ScrollView>  
           )
         }
+        //il visualise ses carnets
         if (this.state.user && this.state.val === 'carnet'){
           return (
             <ScrollView>

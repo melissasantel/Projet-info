@@ -28,7 +28,7 @@ export default class Post extends React.Component {
     static navigationOption ={
         headerTitle:'Nouveau post',
       };
-
+//Réccupération de données avant le chargement de la page
     componentDidMount() {
       this.setState({user:firebase.auth().currentUser});
       firebase.database().ref('users/' + this.state.user.uid+'/pseudonyme').on("value", snapshot => {
@@ -36,7 +36,7 @@ export default class Post extends React.Component {
         firebase.database().ref('users/' + this.state.user.uid+'/visible_account').on("value", snapshot => {
           this.setState({visible: snapshot.val()})});
     }
-
+// Ajouter un post à la bdd
     _addPost = (description,date,location,imageUri)=>{
       if (description  !== '' || imageUri !== ''){
         // A post entry.
@@ -63,7 +63,7 @@ export default class Post extends React.Component {
       }               
     }
 
-   
+   //Affichage formulaire
 
     render(){
         var { params } = this.props.navigation.state; 

@@ -5,7 +5,7 @@ import ViewContainer from '../../components/ViewContainer';
 import StatusbarBackground from '../../components/StatusbarBackground';
 import { styles } from '../../styles/styles';
 import Icons from 'react-native-vector-icons/Feather';
-
+// affichage profil des autres utilisateur 
 export default class UserProfil extends Component {
     constructor() {
         super(); 

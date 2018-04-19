@@ -5,7 +5,7 @@ import ViewContainer from '../../components/ViewContainer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../styles/styles';
 import StatusbarBackground from '../../components/StatusbarBackground';
-
+// Affichage du carnet de l'utilisateur 
 export default class UserCarnet extends React.Component {
     constructor(props){
         super(props);
@@ -16,7 +16,6 @@ export default class UserCarnet extends React.Component {
             CarnetId:'',
             dataSource: ds,
         }
-        //this.Ref= this.getRef('users/'+ this.state.userId +'/user_carnet/'+keyCarnet).child('pages');
         this.renderRow=this.renderRow.bind(this);
         this.pressRow=this.pressRow.bind(this);
     }
@@ -36,7 +35,7 @@ export default class UserCarnet extends React.Component {
       
     }
 
-
+// obtenir les données du carnets dans un tableau 
     getPageCarnet(Ref){
         Ref.on('value',(snap) => {
             let pages =[];
@@ -57,6 +56,7 @@ export default class UserCarnet extends React.Component {
         const {navigate} = this.props.navigation;
         this.props.navigation.navigate('UserPageScreen',{keyCarnet: this.state.CarnetId,keyPage: page._key, userId : this.state.userId})
       }
+      //affichage tableau 
     renderRow(page){
         return(
         <View style={styles.listCarnetContainer}>
@@ -69,7 +69,7 @@ export default class UserCarnet extends React.Component {
       </View>
         )
     }
-   
+   //affichage page
     render() {
         const {navigate} = this.props.navigation;
         return (
